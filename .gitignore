@@ -4,3 +4,14 @@ dist/
 *.tsbuildinfo
 .angular/
 src/entorno.ts
+
+.env.*
+!.env.example
+coverage/
+.vite/
+.eslintcache
+.DS_Store
+Thumbs.db
+*.log
+.idea/
+.vscode/
