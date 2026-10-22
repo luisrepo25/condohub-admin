@@ -4,7 +4,7 @@
 
 ## Stack
 
-Angular 18 (standalone components, signals) · Angular Material · Apollo Angular (GraphQL de Gestión) · `@angular/elements` para exponerse como Web Component · `@angular-architects/module-federation` · Jest o Karma · ESLint.
+Angular 18 (standalone components, signals, zoneless) · Jest · Angular Material · Apollo Angular (GraphQL de Gestión) · `@angular/elements` para exponerse como Web Component · `@angular-architects/module-federation` · ESLint. (Hoy instalado: Angular, `@angular/elements` y Jest; el resto se suma con las pantallas.)
 
 ## Integración con el shell
 
@@ -41,9 +41,8 @@ Cada feature: `*.page.ts` (contenedor), componentes de presentación sin lógica
 ```bash
 npm install
 npm run codegen     # tipos desde el schema GraphQL
-npm start           # ng serve, puerto 4200
+npm run dev         # compila y sirve remoteEntry.js en el puerto 4200
 npm test
-npm run lint
 npm run build
 ```
 
@@ -53,9 +52,9 @@ npm run build
 - Dinero llega como string decimal; formatear con pipe, nunca convertir a `number` para operar.
 - Acciones irreversibles (confirmar pago, aplicar recargo) piden confirmación en un diálogo.
 
-## Estado (16/10/2026)
+## Estado (21/10/2026)
 
-Esqueleto: módulo ES con `mount`/`unmount` que muestra la sesión y consulta `miPerfil` a Gestión (React + Vite, 3 tests, `Dockerfile` con nginx, CI en GitHub Actions). **Faltan todas las pantallas y funciones de este documento.** Cómo correrlo y su contrato con el shell: `README.md`.
+Esqueleto en **Angular 18** (standalone, signals, zoneless): `src/remoteEntry.ts` exporta `mount`/`unmount` y registra el Web Component `<condohub-admin>` con `@angular/elements`; `AdminComponent` muestra la sesión y consulta `miPerfil` a Gestión. Migrado desde React el 21/10 (mismo contrato con el shell, mismos 3 casos de prueba, ahora con Jest). Build: `ng build` → `dist/remoteEntry.js` (módulo ES único). `Dockerfile` con nginx y CI en GitHub Actions sin cambios. **Faltan todas las pantallas y funciones de este documento**, y aún no se agregan Angular Material, Apollo Angular ni Module Federation real (no hacen falta para el esqueleto). Cómo correrlo y su contrato con el shell: `README.md`.
 
 ## Código funcional protegido (obligatorio)
 

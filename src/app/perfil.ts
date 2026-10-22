@@ -1,3 +1,5 @@
+import { GATEWAY_URL } from '../entorno';
+
 export interface UnidadDePersona {
   unidadId: string;
   codigo: string;
@@ -12,13 +14,11 @@ export interface Perfil {
   unidades: UnidadDePersona[];
 }
 
-const GATEWAY = import.meta.env.VITE_GATEWAY_URL ?? 'http://localhost:8080';
-
 const CONSULTA = '{ miPerfil { roles personaId nombre unidades { unidadId codigo bloque titular } } }';
 
 /** Consulta `miPerfil` de Gestión (por el gateway) con el token del shell. */
 export async function cargarPerfil(getToken: () => string): Promise<Perfil> {
-  const r = await fetch(`${GATEWAY}/gestion/graphql`, {
+  const r = await fetch(`${GATEWAY_URL}/gestion/graphql`, {
     method: 'POST',
     headers: { 'content-type': 'application/json', authorization: `Bearer ${getToken()}` },
     body: JSON.stringify({ query: CONSULTA }),

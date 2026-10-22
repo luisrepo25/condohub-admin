@@ -1,6 +1,6 @@
 # condohub-admin
 
-Micro frontend **admin** de CondoHub (Consola de administración, rol `ADMIN`). Responsable: Aldana. Reglas y stack previsto: ver `CLAUDE.md`.
+Micro frontend **admin** de CondoHub (Consola de administración, rol `ADMIN`). Hecho en **Angular 18**. Responsable: Aldana. Reglas y stack previsto: ver `CLAUDE.md`.
 
 Este es el **esqueleto**: el shell lo monta con `mount(el, { getToken, user })` y la pantalla solo confirma que el login llega a Gestión (consulta `miPerfil`). Las funciones del `CLAUDE.md` se agregan encima.
 
@@ -8,7 +8,7 @@ Este es el **esqueleto**: el shell lo monta con `mount(el, { getToken, user })` 
 
 ```bash
 npm install
-npm run dev        # compila y sirve remoteEntry.js en http://localhost:4200/remoteEntry.js
+npm run dev        # compila (ng build) y sirve remoteEntry.js en http://localhost:4200/remoteEntry.js
 npm test
 npm run build
 ```
@@ -17,4 +17,4 @@ Para verlo en el navegador, levanta además el shell (`frontends/shell`, puerto 
 
 ## Contrato con el shell
 
-El build es un módulo ES (`src/remote.tsx`) que exporta `mount(el, contexto)` y `unmount(el)`; el shell lo carga con `import(url)` desde `VITE_REMOTE_*`. React va incluido en el módulo (no se comparte). Cuando se adopte Module Federation real, solo cambia `vite.config.ts`; `mount`/`unmount` y la pantalla siguen igual.
+El build es un módulo ES (`src/remoteEntry.ts`, salida `dist/remoteEntry.js`) que exporta `mount(el, contexto)` y `unmount(el)`; el shell lo carga con `import(url)` desde `VITE_REMOTE_*`. Angular va incluido en el módulo (no se comparte) y la pantalla es el Web Component `<condohub-admin>` (`@angular/elements`, sin zone.js). La URL del gateway (`VITE_GATEWAY_URL`) se escribe en `src/entorno.ts` (generado, no se sube) antes de compilar o probar. Cuando se adopte Module Federation real, solo cambia la configuración de build; `mount`/`unmount` y la pantalla siguen igual.
