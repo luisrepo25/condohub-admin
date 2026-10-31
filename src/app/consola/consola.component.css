@@ -38,3 +38,5 @@ ch-consola {
 .ch-bitacora { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--_suave); font-size: 0.88rem; }
 .ch-tarjeta pre { white-space: pre-wrap; font-size: 0.85rem; }
 .ch-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: 0.5rem; }
+.ch-tarjeta details { margin: 0.4rem 0 0.75rem; }
+.ch-tarjeta a.ch-boton { display: inline-block; margin: 0.25rem 0 0.5rem; text-decoration: none; }
