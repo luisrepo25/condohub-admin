@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, signal } from '@angular/core';
 import type { Api } from '../../core/api';
 import { Grabadora } from '../../core/grabadora';
+import { EJEMPLOS_REPORTE } from './ejemplos';
 import { ReportesService, type FormatoReporte } from './reportes.service';
 import { VistaPreviaTabla } from './vista-previa.tabla';
 
@@ -29,6 +30,12 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
         <input type="file" accept="audio/*" hidden (change)="subir($event, formato.value)" />
       </label>
     </div>
+    <p class="ch-etiqueta">Ejemplos (pulsa uno para copiarlo y luego «Generar»):</p>
+    <div class="ch-ejemplos">
+      @for (e of ejemplos; track e) {
+        <button class="ch-boton" type="button" (click)="orden.value = e">{{ e }}</button>
+      }
+    </div>
     @if (s.error(); as e) { <p class="ch-error" role="alert">{{ e }}</p> }
     @if (s.reporte(); as r) {
       <div class="ch-tarjeta" role="status">
@@ -44,6 +51,7 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
 })
 export class ReportesPage implements OnInit, OnDestroy {
   @Input({ required: true }) api!: Api;
+  readonly ejemplos = EJEMPLOS_REPORTE;
   s!: ReportesService;
   readonly grabando = signal(false);
   private readonly grabadora = new Grabadora();

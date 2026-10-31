@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar } from '../../core/confirmar';
+import { EJEMPLOS_MISION } from './ejemplos';
 import { AgenteService, resumirDato, type Confirmacion } from './agente.service';
 import { MonitoreoPanel } from './monitoreo.panel';
 
@@ -15,6 +16,12 @@ import { MonitoreoPanel } from './monitoreo.panel';
     <div class="ch-barra">
       <input class="ch-campo" #objetivo type="text" value="Gestiona la morosidad del mes" aria-label="Objetivo de la misión" />
       <button class="ch-boton ch-boton--ok" type="button" (click)="s.lanzar(objetivo.value)">Lanzar misión</button>
+    </div>
+    <p class="ch-etiqueta">Ejemplos (pulsa uno para copiarlo y luego «Lanzar misión»):</p>
+    <div class="ch-ejemplos">
+      @for (e of ejemplos; track e) {
+        <button class="ch-boton" type="button" (click)="objetivo.value = e">{{ e }}</button>
+      }
     </div>
     @if (s.error(); as e) { <p class="ch-error" role="alert">{{ e }}</p> }
     @if (s.mision(); as m) {
@@ -57,6 +64,7 @@ export class AgentePage implements OnInit, OnDestroy {
     this.s.detener();
   }
 
+  readonly ejemplos = EJEMPLOS_MISION;
   resumen = resumirDato;
 
   detalle(c: Confirmacion): string {

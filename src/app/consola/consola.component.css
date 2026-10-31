@@ -47,3 +47,6 @@ ch-consola {
 .ch-metricas div { padding: 0.5rem 0.75rem; border: 1px solid var(--ch-borde, #d4d4d8); border-radius: 0.5rem; }
 .ch-metricas dt { font-size: 0.8rem; opacity: 0.75; }
 .ch-metricas dd { margin: 0; font-size: 1.25rem; font-weight: 600; }
+
+.ch-ejemplos { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.25rem 0 0.75rem; }
+.ch-ejemplos .ch-boton { font-size: 0.85rem; text-align: left; }
