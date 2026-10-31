@@ -54,17 +54,18 @@ npm run build
 
 ## Estado (30/10/2026)
 
-Angular 18 (standalone, signals, zoneless). `src/remoteEntry.ts` exporta `mount`/`unmount` y, para Module Federation, `init`/`get` (contenedor que expone `./remote`); registra el Web Component `<condohub-admin>`. `AdminComponent` muestra la sesión y `miPerfil` y compone `<ch-consola>` (`src/app/consola/`), con cinco pestañas probadas contra el sistema local:
+Angular 18 (standalone, signals, zoneless). `src/remoteEntry.ts` exporta `mount`/`unmount` y, para Module Federation, `init`/`get` (contenedor que expone `./remote`); registra el Web Component `<condohub-admin>`. `AdminComponent` muestra la sesión y `miPerfil` y compone `<ch-consola>` (`src/app/consola/`), con seis pestañas probadas contra el sistema local:
 
+- **Expensas** (F2, F3, F10): emite las expensas del mes con `emitirExpensas(periodo, presupuesto)`; pide confirmación, valida solo la forma (mes y decimal positivo) y muestra tal cual el rechazo de Gestión con su código (F2 alícuotas, F3 mes pasado o ya emitido). Muestra cuántas unidades, el total y el vencimiento.
 - **Pagos** (F8): `pagosPendientes`, confirmar (recibo, F7) o rechazar con motivo; pide confirmación.
 - **Recargos** (F5): `recargosPropuestos`, confirmar o rechazar; nada se cobra sin el clic del ADMIN.
 - **Sagas** (S3): `GET /reservas/api/sagas/requieren-revision`.
 - **Agente** (G1–G3, G5): lanza la misión, sigue su avance, muestra la bitácora y deja aprobar o rechazar cada acción pendiente (G2); botón del agente de monitoreo.
 - **Reportes por voz** (G4): graba con el micrófono o sube un audio, sigue el reporte, **muestra el resultado en una tabla** (vista previa de las primeras 50 filas con «Mostrando N de M», `vista-previa.tabla.ts`) y ofrece la descarga a Excel o PDF.
 
-Capas: `core/` (cliente de API por el gateway con el token del shell, `unidades.ts` resuelve «B-101» desde `unidadId`, adaptadores de confirmación y micrófono) y `features/<f>/` con `*.service.ts` (signals, sin red propia: reciben el puerto `Api`) y `*.page.ts` (solo presentación). Los sondeos del agente y de los reportes se liberan al desmontar. 25 pruebas con Jest (los servicios con código de regla en el nombre).
+Capas: `core/` (cliente de API por el gateway con el token del shell, `unidades.ts` resuelve «B-101» desde `unidadId`, adaptadores de confirmación y micrófono) y `features/<f>/` con `*.service.ts` (signals, sin red propia: reciben el puerto `Api`) y `*.page.ts` (solo presentación). Los sondeos del agente y de los reportes se liberan al desmontar. 31 pruebas con Jest (los servicios con código de regla en el nombre).
 
-**Falta:** unidades y alícuotas (F1, F2), emisión de expensas (F3), estado de cuenta/morosos, proveedores y egresos (F11), calendario de reservas, cámaras y alertas (I4), Angular Material y Apollo (no hacen falta hasta ahora). Cómo correrlo y su contrato con el shell: `README.md`.
+**Falta:** unidades y alícuotas (F1, F2), estado de cuenta/morosos, proveedores y egresos (F11), calendario de reservas, cámaras y alertas (I4), Angular Material y Apollo (no hacen falta hasta ahora). Cómo correrlo y su contrato con el shell: `README.md`.
 
 ## Código funcional protegido (obligatorio)
 

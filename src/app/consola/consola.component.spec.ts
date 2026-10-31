@@ -23,15 +23,15 @@ describe('consola del ADMIN', () => {
     document.body.innerHTML = '';
   });
 
-  it('muestra las pestañas y abre Pagos con el estado vacío', async () => {
+  it('muestra las pestañas y abre Expensas, la primera', async () => {
     globalThis.fetch = fetchPorRuta() as unknown as typeof fetch;
     const el = document.body.appendChild(document.createElement('div'));
 
     await mount(el, { getToken: () => 't', user: usuario });
 
-    await esperar(() => (el.textContent ?? '').includes('No hay pagos pendientes de conciliar'));
+    await esperar(() => (el.textContent ?? '').includes('Emisión de expensas'));
     const pestanas = Array.from(el.querySelectorAll('[role="tab"]')).map((b) => b.textContent?.trim());
-    expect(pestanas).toEqual(['Pagos', 'Recargos', 'Sagas', 'Agente', 'Reportes por voz']);
+    expect(pestanas).toEqual(['Expensas', 'Pagos', 'Recargos', 'Sagas', 'Agente', 'Reportes por voz']);
   });
 
   it('S3_al_abrir_Sagas_consulta_a_Reservas_por_el_gateway', async () => {

@@ -1,14 +1,16 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { crearApi, type Api } from '../core/api';
 import { AgentePage } from '../features/agente/agente.page';
+import { ExpensasPage } from '../features/expensas/expensas.page';
 import { PagosPage } from '../features/pagos/pagos.page';
 import { RecargosPage } from '../features/recargos/recargos.page';
 import { ReportesPage } from '../features/reportes/reportes.page';
 import { SagasPage } from '../features/sagas/sagas.page';
 
-type Pestana = 'pagos' | 'recargos' | 'sagas' | 'agente' | 'reportes';
+type Pestana = 'expensas' | 'pagos' | 'recargos' | 'sagas' | 'agente' | 'reportes';
 
 const PESTANAS: { id: Pestana; titulo: string }[] = [
+  { id: 'expensas', titulo: 'Expensas' },
   { id: 'pagos', titulo: 'Pagos' },
   { id: 'recargos', titulo: 'Recargos' },
   { id: 'sagas', titulo: 'Sagas' },
@@ -20,7 +22,7 @@ const PESTANAS: { id: Pestana; titulo: string }[] = [
 @Component({
   selector: 'ch-consola',
   standalone: true,
-  imports: [PagosPage, RecargosPage, SagasPage, AgentePage, ReportesPage],
+  imports: [ExpensasPage, PagosPage, RecargosPage, SagasPage, AgentePage, ReportesPage],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
   styleUrl: './consola.component.css',
@@ -34,6 +36,7 @@ const PESTANAS: { id: Pestana; titulo: string }[] = [
     </nav>
     <section class="ch-panel" role="tabpanel">
       @switch (actual()) {
+        @case ('expensas') { <ch-expensas [api]="api" /> }
         @case ('pagos') { <ch-pagos [api]="api" /> }
         @case ('recargos') { <ch-recargos [api]="api" /> }
         @case ('sagas') { <ch-sagas [api]="api" /> }
@@ -46,7 +49,7 @@ const PESTANAS: { id: Pestana; titulo: string }[] = [
 export class ConsolaComponent implements OnInit {
   @Input({ required: true }) getToken!: () => string;
   readonly pestanas = PESTANAS;
-  readonly actual = signal<Pestana>('pagos');
+  readonly actual = signal<Pestana>('expensas');
   api!: Api;
 
   ngOnInit(): void {
