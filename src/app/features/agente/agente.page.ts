@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar } from '../../core/confirmar';
-import { AgenteService, type Confirmacion } from './agente.service';
+import { AgenteService, resumirDato, type Confirmacion } from './agente.service';
 import { MonitoreoPanel } from './monitoreo.panel';
 
 @Component({
@@ -32,7 +32,11 @@ import { MonitoreoPanel } from './monitoreo.panel';
           <summary>Bitácora (G3)</summary>
           <ol class="ch-bitacora">
             @for (p of m.pasos; track p.paso) {
-              <li>{{ p.tipo }} {{ p.herramienta ?? '' }} {{ p.confirmadoPor ? '· confirmó ' + p.confirmadoPor : '' }}</li>
+              <li>
+                <strong>{{ p.tipo }}</strong> {{ p.herramienta ?? '' }} {{ p.confirmadoPor ? '· confirmó ' + p.confirmadoPor : '' }}
+                @if (resumen(p.entrada)) { <br /><small>entrada: {{ resumen(p.entrada) }}</small> }
+                @if (resumen(p.salida)) { <br /><small>salida: {{ resumen(p.salida) }}</small> }
+              </li>
             }
           </ol>
         </details>
@@ -52,6 +56,8 @@ export class AgentePage implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.s.detener();
   }
+
+  resumen = resumirDato;
 
   detalle(c: Confirmacion): string {
     return JSON.stringify(c.argumentos ?? {});

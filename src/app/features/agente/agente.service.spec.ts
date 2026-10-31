@@ -1,5 +1,5 @@
 import type { Api } from '../../core/api';
-import { AgenteService, type Mision } from './agente.service';
+import { AgenteService, resumirDato, type Mision } from './agente.service';
 
 const base: Mision = { id: 'm1', objetivo: 'Gestiona la morosidad del mes', estado: 'EN_CURSO', confirmacionesPendientes: [], pasos: [] };
 const pendiente = { id: 'c1', herramienta: 'proponer_recargo', riesgo: 'DINERO', estado: 'PENDIENTE' };
@@ -78,5 +78,15 @@ describe('AgenteService (G1-G3)', () => {
     await jest.advanceTimersByTimeAsync(20000);
 
     expect(rest).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('bitácora del agente (G3): entrada y salida de cada paso', () => {
+  it('G3_resume_un_objeto_en_una_linea_y_recorta_lo_muy_largo', () => {
+    expect(resumirDato(undefined)).toBe('');
+    expect(resumirDato(null)).toBe('');
+    expect(resumirDato({ unidadId: 'u1' })).toBe('{"unidadId":"u1"}');
+    expect(resumirDato({ x: 'a'.repeat(300) })).toHaveLength(120);
+    expect(resumirDato({ x: 'a'.repeat(300) }).endsWith('…')).toBe(true);
   });
 });

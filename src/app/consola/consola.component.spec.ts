@@ -31,7 +31,7 @@ describe('consola del ADMIN', () => {
 
     await esperar(() => (el.textContent ?? '').includes('Emisión de expensas'));
     const pestanas = Array.from(el.querySelectorAll('[role="tab"]')).map((b) => b.textContent?.trim());
-    expect(pestanas).toEqual(['Expensas', 'Pagos', 'Recargos', 'Sagas', 'Agente', 'Reportes por voz']);
+    expect(pestanas).toEqual(['Expensas', 'Pagos', 'Recargos', 'Reservas', 'Sagas', 'Agente', 'Reportes por voz']);
   });
 
   it('S3_al_abrir_Sagas_consulta_a_Reservas_por_el_gateway', async () => {

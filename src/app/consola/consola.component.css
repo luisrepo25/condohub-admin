@@ -40,3 +40,10 @@ ch-consola {
 .ch-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: 0.5rem; }
 .ch-tarjeta details { margin: 0.4rem 0 0.75rem; }
 .ch-tarjeta a.ch-boton { display: inline-block; margin: 0.25rem 0 0.5rem; text-decoration: none; }
+.ch-historial { list-style: none; margin: 0.5rem 0; padding: 0; display: grid; gap: 0.5rem; }
+.ch-historial li { border: 1px solid var(--_borde); border-radius: 0.5rem; padding: 0.5rem 0.8rem; display: grid; gap: 0.15rem; }
+
+.ch-metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.5rem; margin: 0.5rem 0; }
+.ch-metricas div { padding: 0.5rem 0.75rem; border: 1px solid var(--ch-borde, #d4d4d8); border-radius: 0.5rem; }
+.ch-metricas dt { font-size: 0.8rem; opacity: 0.75; }
+.ch-metricas dd { margin: 0; font-size: 1.25rem; font-weight: 600; }

@@ -3,15 +3,30 @@ import type { Api } from '../../core/api';
 import { ConEstado } from '../../core/operacion';
 
 export interface Confirmacion { id: string; herramienta: string; argumentos?: Record<string, unknown>; riesgo: string; estado: string }
-export interface Paso { paso: number; tipo: string; herramienta?: string | null; confirmadoPor?: string | null }
+export interface Paso {
+  paso: number; tipo: string; fecha?: string; herramienta?: string | null; confirmadoPor?: string | null;
+  entrada?: Record<string, unknown> | null; salida?: Record<string, unknown> | null;
+}
 export interface Mision {
   id: string; objetivo: string; estado: string; resumen?: string | null;
   confirmacionesPendientes: Confirmacion[]; pasos: Paso[];
 }
 export interface Alerta { tipo: string; severidad: string; mensaje: string }
-export interface Informe { id: string; generadoEn: string; resumen: string; alertas: Alerta[] }
+export interface Metricas { unidadesMorosas: number; deudaVencida: string; pagosPendientes: number; diasPagoMasAntiguo: number }
+export interface Informe {
+  id: string; generadoEn: string; resumen: string; alertas: Alerta[];
+  origen?: string; notificado?: boolean; lineaBase?: boolean; metricas?: Metricas;
+}
 
 const INTERVALO_MS = 3000;
+const MAX_RESUMEN = 120;
+
+/** G3: entrada o salida de un paso en una sola línea, para leer la bitácora sin abrir cada JSON. */
+export function resumirDato(dato: Record<string, unknown> | null | undefined): string {
+  if (!dato) return '';
+  const texto = JSON.stringify(dato);
+  return texto.length > MAX_RESUMEN ? texto.slice(0, MAX_RESUMEN - 1) + '…' : texto;
+}
 /** Estados en los que el agente sigue trabajando: se consulta hasta que termine o espere al ADMIN (G2). */
 const ACTIVA = 'EN_CURSO';
 
@@ -19,6 +34,7 @@ const ACTIVA = 'EN_CURSO';
 export class AgenteService extends ConEstado {
   readonly mision = signal<Mision | null>(null);
   readonly informe = signal<Informe | null>(null);
+  readonly historial = signal<Informe[]>([]);
   private temporizador: ReturnType<typeof setTimeout> | undefined;
 
   constructor(private readonly api: Api) {
@@ -44,6 +60,13 @@ export class AgenteService extends ConEstado {
   ejecutarMonitoreo(): Promise<void> {
     return this.ejecutar(async () => {
       this.informe.set(await this.api.rest<Informe>('POST', '/agentes/monitoreo/ejecutar'));
+    });
+  }
+
+  /** G5: los últimos informes del agente de monitoreo, del más reciente al más antiguo. */
+  cargarInformes(): Promise<void> {
+    return this.ejecutar(async () => {
+      this.historial.set(await this.api.rest<Informe[]>('GET', '/agentes/monitoreo/informes?limite=10'));
     });
   }
 
