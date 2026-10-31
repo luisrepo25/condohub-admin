@@ -1,0 +1,39 @@
+/* Estilos globales de la consola (ViewEncapsulation.None): las pantallas hijas no traen hoja propia. Colores del shell (--ch-*). */
+ch-consola {
+  --_bg: var(--ch-surface, #ffffff);
+  --_texto: var(--ch-text, #1f2937);
+  --_suave: var(--ch-muted, #6b7280);
+  --_borde: var(--ch-border, #e5e7eb);
+  --_acento: var(--ch-accent, #2563eb);
+  display: block;
+  margin-top: 1.5rem;
+  color: var(--_texto);
+}
+.ch-pestanas { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 1px solid var(--_borde); }
+.ch-pestanas button {
+  padding: 0.6rem 1rem; border: 0; border-bottom: 2px solid transparent;
+  background: none; color: var(--_suave); font: inherit; cursor: pointer;
+}
+.ch-pestanas button.ch-activa { color: var(--_acento); border-bottom-color: var(--_acento); font-weight: 600; }
+.ch-panel { padding-top: 1rem; }
+.ch-panel h2 { margin: 0.5rem 0; font-size: 1.15rem; }
+.ch-barra { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+.ch-tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.ch-tabla th, .ch-tabla td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--_borde); text-align: left; }
+.ch-tabla th { color: var(--_suave); font-weight: 600; }
+.ch-acciones { display: flex; gap: 0.4rem; }
+.ch-boton {
+  padding: 0.4rem 0.9rem; border: 1px solid var(--_borde); border-radius: 0.5rem;
+  background: var(--_bg); color: var(--_texto); font: inherit; cursor: pointer;
+}
+.ch-boton--ok { border-color: var(--_acento); color: var(--_acento); }
+.ch-boton--no { border-color: #b91c1c; color: #b91c1c; }
+.ch-campo { flex: 1; min-width: 12rem; padding: 0.45rem 0.7rem; border: 1px solid var(--_borde); border-radius: 0.5rem; font: inherit; }
+.ch-error { color: #b91c1c; margin: 0.5rem 0; }
+.ch-aviso { color: #166534; margin: 0.5rem 0; }
+.ch-vacio, .ch-etiqueta { color: var(--_suave); margin: 0.25rem 0 0.75rem; }
+.ch-tarjeta { border: 1px solid var(--_borde); border-radius: 0.75rem; padding: 1rem 1.25rem; margin: 0.75rem 0; background: var(--_bg); }
+.ch-pendiente { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.5rem 0; border-top: 1px solid var(--_borde); }
+.ch-pendiente span { flex: 1; min-width: 14rem; }
+.ch-bitacora { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--_suave); font-size: 0.88rem; }
+.ch-tarjeta pre { white-space: pre-wrap; font-size: 0.85rem; }

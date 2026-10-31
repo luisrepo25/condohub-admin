@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, Input, OnInit, signal } from '@angular/core';
+import { ConsolaComponent } from './consola/consola.component';
 import { cargarPerfil, type Perfil } from './perfil';
 
 export interface Contexto {
@@ -10,6 +11,7 @@ export interface Contexto {
 @Component({
   selector: 'ch-admin',
   standalone: true,
+  imports: [ConsolaComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrl: './admin.component.css',
   template: `
@@ -40,6 +42,7 @@ export interface Contexto {
           }
         </div>
       }
+      <ch-consola [getToken]="getToken" />
     </section>
   `,
 })

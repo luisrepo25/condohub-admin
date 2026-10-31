@@ -27,3 +27,12 @@ export async function mount(el: HTMLElement, contexto: Contexto): Promise<void> 
 export function unmount(el: HTMLElement): void {
   el.replaceChildren();
 }
+
+// Contenedor de Module Federation (protocolo init/get del plugin del shell): este módulo ES hace de contenedor
+// y expone './remote'. Angular no comparte React, así que no hay dependencias compartidas que inicializar.
+export function init(): void {}
+
+export function get(modulo: string): Promise<() => { mount: typeof mount; unmount: typeof unmount }> {
+  if (modulo !== './remote') return Promise.reject(new Error(`Módulo no expuesto: ${modulo}`));
+  return Promise.resolve(() => ({ mount, unmount }));
+}

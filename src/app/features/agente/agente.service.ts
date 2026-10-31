@@ -1,0 +1,81 @@
+import { signal } from '@angular/core';
+import type { Api } from '../../core/api';
+import { ConEstado } from '../../core/operacion';
+
+export interface Confirmacion { id: string; herramienta: string; argumentos?: Record<string, unknown>; riesgo: string; estado: string }
+export interface Paso { paso: number; tipo: string; herramienta?: string | null; confirmadoPor?: string | null }
+export interface Mision {
+  id: string; objetivo: string; estado: string; resumen?: string | null;
+  confirmacionesPendientes: Confirmacion[]; pasos: Paso[];
+}
+export interface Alerta { tipo: string; severidad: string; mensaje: string }
+export interface Informe { id: string; generadoEn: string; resumen: string; alertas: Alerta[] }
+
+const INTERVALO_MS = 3000;
+/** Estados en los que el agente sigue trabajando: se consulta hasta que termine o espere al ADMIN (G2). */
+const ACTIVA = 'EN_CURSO';
+
+/** G1–G3 y G5: lanza la misión, muestra su bitácora y deja al ADMIN aprobar o rechazar lo que escribe o mueve dinero. */
+export class AgenteService extends ConEstado {
+  readonly mision = signal<Mision | null>(null);
+  readonly informe = signal<Informe | null>(null);
+  private temporizador: ReturnType<typeof setTimeout> | undefined;
+
+  constructor(private readonly api: Api) {
+    super();
+  }
+
+  lanzar(objetivo: string): Promise<void> {
+    return this.ejecutar(async () => {
+      const m = await this.api.rest<Partial<Mision> & Pick<Mision, 'id' | 'objetivo' | 'estado'>>('POST', '/agentes/misiones', { tipo: 'GESTIONAR_MOROSIDAD', objetivo });
+      this.mision.set({ ...m, confirmacionesPendientes: m.confirmacionesPendientes ?? [], pasos: m.pasos ?? [] });
+      this.vigilar(m.id);
+    });
+  }
+
+  aprobar(id: string): Promise<void> {
+    return this.resolver(id, 'aprobar');
+  }
+
+  rechazar(id: string): Promise<void> {
+    return this.resolver(id, 'rechazar');
+  }
+
+  ejecutarMonitoreo(): Promise<void> {
+    return this.ejecutar(async () => {
+      this.informe.set(await this.api.rest<Informe>('POST', '/agentes/monitoreo/ejecutar'));
+    });
+  }
+
+  /** Libera el sondeo al desmontar la pantalla (el shell monta y desmonta remotos). */
+  detener(): void {
+    clearTimeout(this.temporizador);
+    this.temporizador = undefined;
+  }
+
+  private resolver(id: string, accion: 'aprobar' | 'rechazar'): Promise<void> {
+    return this.ejecutar(async () => {
+      await this.api.rest('POST', `/agentes/confirmaciones/${id}/${accion}`);
+      const actual = this.mision();
+      if (actual) await this.actualizar(actual.id);
+    });
+  }
+
+  private vigilar(id: string): void {
+    this.detener();
+    this.temporizador = setTimeout(() => {
+      this.temporizador = undefined;
+      void this.actualizar(id);
+    }, INTERVALO_MS);
+  }
+
+  /** Consulta la misión y, mientras el agente siga trabajando, programa la siguiente consulta. */
+  private async actualizar(id: string): Promise<void> {
+    try {
+      this.mision.set(await this.api.rest<Mision>('GET', `/agentes/misiones/${id}`));
+      if (this.mision()?.estado === ACTIVA) this.vigilar(id);
+    } catch (e) {
+      this.error.set(e instanceof Error ? e.message : 'No se pudo consultar la misión');
+    }
+  }
+}

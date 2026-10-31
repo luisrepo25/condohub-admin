@@ -52,9 +52,19 @@ npm run build
 - Dinero llega como string decimal; formatear con pipe, nunca convertir a `number` para operar.
 - Acciones irreversibles (confirmar pago, aplicar recargo) piden confirmación en un diálogo.
 
-## Estado (21/10/2026)
+## Estado (30/10/2026)
 
-Esqueleto en **Angular 18** (standalone, signals, zoneless): `src/remoteEntry.ts` exporta `mount`/`unmount` y registra el Web Component `<condohub-admin>` con `@angular/elements`; `AdminComponent` muestra la sesión y consulta `miPerfil` a Gestión. Migrado desde React el 21/10 (mismo contrato con el shell, mismos 3 casos de prueba, ahora con Jest). Build: `ng build` → `dist/remoteEntry.js` (módulo ES único). `Dockerfile` con nginx y CI en GitHub Actions sin cambios. **Faltan todas las pantallas y funciones de este documento**, y aún no se agregan Angular Material, Apollo Angular ni Module Federation real (no hacen falta para el esqueleto). Cómo correrlo y su contrato con el shell: `README.md`.
+Angular 18 (standalone, signals, zoneless). `src/remoteEntry.ts` exporta `mount`/`unmount` y, para Module Federation, `init`/`get` (contenedor que expone `./remote`); registra el Web Component `<condohub-admin>`. `AdminComponent` muestra la sesión y `miPerfil` y compone `<ch-consola>` (`src/app/consola/`), con cinco pestañas probadas contra el sistema local:
+
+- **Pagos** (F8): `pagosPendientes`, confirmar (recibo, F7) o rechazar con motivo; pide confirmación.
+- **Recargos** (F5): `recargosPropuestos`, confirmar o rechazar; nada se cobra sin el clic del ADMIN.
+- **Sagas** (S3): `GET /reservas/api/sagas/requieren-revision`.
+- **Agente** (G1–G3, G5): lanza la misión, sigue su avance, muestra la bitácora y deja aprobar o rechazar cada acción pendiente (G2); botón del agente de monitoreo.
+- **Reportes por voz** (G4): graba con el micrófono o sube un audio, sigue el reporte y ofrece la descarga.
+
+Capas: `core/` (cliente de API por el gateway con el token del shell, `unidades.ts` resuelve «B-101» desde `unidadId`, adaptadores de confirmación y micrófono) y `features/<f>/` con `*.service.ts` (signals, sin red propia: reciben el puerto `Api`) y `*.page.ts` (solo presentación). Los sondeos del agente y de los reportes se liberan al desmontar. 21 pruebas con Jest (los servicios con código de regla en el nombre).
+
+**Falta:** unidades y alícuotas (F1, F2), emisión de expensas (F3), estado de cuenta/morosos, proveedores y egresos (F11), calendario de reservas, cámaras y alertas (I4), Angular Material y Apollo (no hacen falta hasta ahora). Cómo correrlo y su contrato con el shell: `README.md`.
 
 ## Código funcional protegido (obligatorio)
 
