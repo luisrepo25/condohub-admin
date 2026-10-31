@@ -11,7 +11,11 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Reportes por voz</h2>
-    <p class="ch-etiqueta">Graba una instrucción (por ejemplo «morosidad por bloque en Excel»). Solo se generan consultas de lectura (G4).</p>
+    <p class="ch-etiqueta">Escribe o graba una instrucción (por ejemplo «morosidad por bloque en Excel»). Solo se generan consultas de lectura (G4).</p>
+    <div class="ch-barra">
+      <input class="ch-campo" #orden type="text" maxlength="1000" placeholder="Escribe lo que quieres reportar…" aria-label="Instrucción escrita" (keydown.enter)="escribir(orden.value, formato.value)" />
+      <button class="ch-boton ch-boton--ok" type="button" (click)="escribir(orden.value, formato.value)">Generar</button>
+    </div>
     <div class="ch-barra">
       <select class="ch-campo" #formato aria-label="Formato del reporte">
         <option value="EXCEL">Excel</option><option value="PDF">PDF</option>
@@ -65,6 +69,10 @@ export class ReportesPage implements OnInit, OnDestroy {
   async detener(formato: string): Promise<void> {
     this.grabando.set(false);
     await this.s.crear(await this.grabadora.detener(), formato as FormatoReporte);
+  }
+
+  async escribir(instruccion: string, formato: string): Promise<void> {
+    await this.s.crearPorTexto(instruccion, formato as FormatoReporte);
   }
 
   async subir(evento: Event, formato: string): Promise<void> {

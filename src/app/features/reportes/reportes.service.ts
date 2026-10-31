@@ -32,6 +32,20 @@ export class ReportesService extends ConEstado {
     });
   }
 
+  /** La misma orden, escrita en vez de hablada: el servicio omite Whisper y el resto del flujo es igual. */
+  crearPorTexto(instruccion: string, formato: FormatoReporte): Promise<void> {
+    return this.ejecutar(async () => {
+      const texto = instruccion.trim();
+      if (texto === '') throw new Error('Escribe la instrucción del reporte');
+      const datos = new FormData();
+      datos.append('instruccion', texto);
+      datos.append('formato', formato);
+      const r = await this.api.rest<Reporte>('POST', '/ia/reportes/voz', datos);
+      this.reporte.set(r);
+      this.vigilar(r.id);
+    });
+  }
+
   /** Libera el sondeo al desmontar la pantalla. */
   detener(): void {
     clearTimeout(this.temporizador);
