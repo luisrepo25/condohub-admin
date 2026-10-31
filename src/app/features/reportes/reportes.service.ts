@@ -3,9 +3,11 @@ import type { Api } from '../../core/api';
 import { ConEstado } from '../../core/operacion';
 
 export type FormatoReporte = 'EXCEL' | 'PDF';
+/** Primeras filas del resultado (G4): cada fila va alineada con las columnas y en texto. */
+export interface VistaPrevia { columnas: string[]; filas: (string | null)[][]; total: number }
 export interface Reporte {
   id: string; estado: string; formato?: string; transcripcion?: string;
-  consultaGraphql?: string; archivoUrl?: string; motivoFallo?: string;
+  consultaGraphql?: string; archivoUrl?: string; motivoFallo?: string; vistaPrevia?: VistaPrevia;
 }
 
 const INTERVALO_MS = 2000;

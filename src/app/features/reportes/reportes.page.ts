@@ -2,10 +2,12 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, signal } 
 import type { Api } from '../../core/api';
 import { Grabadora } from '../../core/grabadora';
 import { ReportesService, type FormatoReporte } from './reportes.service';
+import { VistaPreviaTabla } from './vista-previa.tabla';
 
 @Component({
   selector: 'ch-reportes',
   standalone: true,
+  imports: [VistaPreviaTabla],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Reportes por voz</h2>
@@ -31,6 +33,7 @@ import { ReportesService, type FormatoReporte } from './reportes.service';
         @if (r.consultaGraphql) { <details><summary>Consulta armada</summary><pre>{{ r.consultaGraphql }}</pre></details> }
         @if (r.archivoUrl) { <a class="ch-boton ch-boton--ok" [href]="r.archivoUrl" target="_blank" rel="noopener">Descargar {{ r.formato }}</a> }
         @if (r.motivoFallo) { <p class="ch-error">{{ r.motivoFallo }}</p> }
+        @if (r.vistaPrevia; as v) { <ch-vista-previa [vista]="v" /> }
       </div>
     }
   `,

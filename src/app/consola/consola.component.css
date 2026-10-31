@@ -37,3 +37,4 @@ ch-consola {
 .ch-pendiente span { flex: 1; min-width: 14rem; }
 .ch-bitacora { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--_suave); font-size: 0.88rem; }
 .ch-tarjeta pre { white-space: pre-wrap; font-size: 0.85rem; }
+.ch-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: 0.5rem; }
