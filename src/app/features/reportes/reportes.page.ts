@@ -12,7 +12,7 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Reportes por voz</h2>
-    <p class="ch-etiqueta">Escribe o graba una instrucción (por ejemplo «morosidad por bloque en Excel»). Solo se generan consultas de lectura (G4).</p>
+    <p class="ch-etiqueta">Escribe o graba una instrucción (por ejemplo «morosidad por bloque en Excel»). Los reportes solo leen datos; nunca cambian nada.</p>
     <div class="ch-barra">
       <input class="ch-campo" #orden type="text" maxlength="1000" placeholder="Escribe lo que quieres reportar…" aria-label="Instrucción escrita" (keydown.enter)="escribir(orden.value, formato.value)" />
       <button class="ch-boton ch-boton--ok" type="button" (click)="escribir(orden.value, formato.value)">Generar</button>

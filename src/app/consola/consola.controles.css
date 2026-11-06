@@ -1,0 +1,31 @@
+ch-consola .ch-boton, .ch-dialogo .ch-boton {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px;
+  border: 1px solid var(--ch-control, #7c8aa0); border-radius: 11px; background: transparent;
+  color: var(--ch-text, #1f2937); font: inherit; font-weight: 600; text-decoration: none; cursor: pointer;
+  transition: background-color 0.16s ease-out, border-color 0.16s ease-out, transform 0.1s ease-out;
+}
+ch-consola .ch-boton:hover, .ch-dialogo .ch-boton:hover { background: var(--ch-superficie-2, #eef2f8); border-color: var(--ch-borde-fuerte, #9fb0c7); color: var(--ch-text, #1f2937); }
+ch-consola .ch-boton:active, .ch-dialogo .ch-boton:active { transform: scale(0.98); }
+ch-consola .ch-boton--ok, .ch-dialogo .ch-boton--ok { background: var(--ch-accent, #2563eb); border-color: var(--ch-accent, #2563eb); color: var(--ch-accent-texto, #ffffff); font-weight: 700; }
+ch-consola .ch-boton--ok:hover, .ch-dialogo .ch-boton--ok:hover { background: var(--ch-accent-hover, #1d4ed8); border-color: var(--ch-accent-hover, #1d4ed8); color: var(--ch-accent-texto, #ffffff); }
+ch-consola .ch-boton--no, .ch-dialogo .ch-boton--no { border-color: var(--ch-peligro, #b91c1c); color: var(--ch-peligro, #b91c1c); }
+ch-consola .ch-boton--no:hover, .ch-dialogo .ch-boton--no:hover { background: var(--ch-peligro-fondo, #fee2e2); border-color: var(--ch-peligro, #b91c1c); color: var(--ch-peligro, #b91c1c); }
+ch-consola .ch-boton--icono { width: 44px; padding: 0; flex: none; }
+ch-consola .ch-campo, .ch-dialogo .ch-campo {
+  flex: 1; width: 100%; min-width: 0; min-height: 46px; padding: 0 13px; border: 1px solid var(--ch-control, #7c8aa0); border-radius: 11px;
+  background: var(--ch-superficie-2, #eef2f8); color: var(--ch-text, #1f2937); font: inherit;
+}
+ch-consola .ch-campo::placeholder, .ch-dialogo .ch-campo::placeholder { color: var(--ch-muted, #5b6678); }
+ch-consola .ch-campo:focus, .ch-dialogo .ch-campo:focus { outline: 2px solid var(--ch-accent, #2563eb); outline-offset: 1px; }
+.ch-rotulo { display: flex; flex-direction: column; gap: 5px; flex: 1 1 190px; min-width: 0; font-size: 0.92rem; font-weight: 600; }
+.ch-ejemplos { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 12px; }
+ch-consola .ch-ejemplos .ch-boton { font-size: 0.9rem; font-weight: 500; text-align: left; background: var(--_sup2); border-color: var(--_borde); }
+.ch-enviar { display: flex; gap: 8px; margin: 0; }
+.ch-dialogo {
+  max-width: min(460px, calc(100vw - 32px)); padding: 22px 24px; border: 1px solid var(--ch-borde-fuerte, #9fb0c7); border-radius: 16px;
+  background: var(--ch-surface, #ffffff); color: var(--ch-text, #1f2937); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
+}
+.ch-dialogo::backdrop { background: rgba(5, 12, 24, 0.6); }
+.ch-dialogo p { margin: 0 0 14px; line-height: 1.5; }
+.ch-dialogo-acciones { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+ch-consola :focus-visible { outline: 2px solid var(--_acento); outline-offset: 2px; }

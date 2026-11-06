@@ -1,0 +1,31 @@
+<div class="ch-marco">
+  <nav class="ch-pestanas" role="tablist" aria-orientation="vertical" aria-label="Funciones de la consola">
+    @for (g of grupos; track g.titulo) {
+      <p class="ch-grupo" aria-hidden="true">{{ g.titulo }}</p>
+      @for (p of g.items; track p.id) {
+        <button type="button" role="tab" [class.ch-activa]="actual() === p.id" [attr.aria-selected]="actual() === p.id" [attr.data-cuenta]="cuenta(p.id)" (click)="ir(p.id)">
+          <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path [attr.d]="p.icono" /></svg>
+          <span class="ch-nav-t" [attr.data-ayuda]="p.ayuda">{{ p.titulo }}</span>
+        </button>
+      }
+    }
+  </nav>
+  <div class="ch-area">
+    <ng-content />
+    <ch-resumen [datos]="datos()" (ir)="ir($event)" />
+    <div class="ch-reparto">
+      <section class="ch-panel" role="tabpanel">
+        @switch (actual()) {
+          @case ('expensas') { <ch-expensas [api]="api" /> }
+          @case ('pagos') { <ch-pagos [api]="api" /> }
+          @case ('recargos') { <ch-recargos [api]="api" /> }
+          @case ('reservas') { <ch-reservas [api]="api" /> }
+          @case ('sagas') { <ch-sagas [api]="api" /> }
+          @case ('agente') { <ch-agente [api]="api" [pedido]="pedido()" /> }
+          @case ('reportes') { <ch-reportes [api]="api" /> }
+        }
+      </section>
+      <ch-riel class="ch-riel" [datos]="datos()" (pedir)="pedir($event)" />
+    </div>
+  </div>
+</div>

@@ -11,22 +11,22 @@ import { SagasService } from './sagas.service';
       <h2>Sagas que requieren revisión</h2>
       <button class="ch-boton" type="button" (click)="s.cargar()">Actualizar</button>
     </div>
-    <p class="ch-etiqueta">Una compensación que no se logró deja la reserva atascada hasta que alguien la revise (S3).</p>
+    <p class="ch-etiqueta">El sistema no pudo deshacer un paso de estas reservas por sí solo y necesitan que alguien las revise.</p>
     @if (s.error(); as e) { <p class="ch-error" role="alert">{{ e }}</p> }
     @if (s.sagas().length === 0) {
       <p class="ch-vacio">Ninguna saga necesita revisión.</p>
     } @else {
-      <table class="ch-tabla">
+      <div class="ch-scroll"><table class="ch-tabla">
         <thead><tr><th>Saga</th><th>Reserva</th><th>Estado</th><th>Paso</th><th>Último error</th></tr></thead>
         <tbody>
           @for (x of s.sagas(); track x.id) {
             <tr>
               <td>{{ x.id.slice(0, 8) }}</td><td>{{ x.reservaId.slice(0, 8) }}</td>
-              <td>{{ x.estado }}</td><td>{{ x.pasoActual }}</td><td>{{ x.ultimoError ?? '—' }}</td>
+              <td><span class="ch-insignia" [attr.data-estado]="x.estado">{{ x.estado }}</span></td><td>{{ x.pasoActual }}</td><td>{{ x.ultimoError ?? '—' }}</td>
             </tr>
           }
         </tbody>
-      </table>
+      </table></div>
     }
   `,
 })

@@ -66,6 +66,8 @@ Angular 18 (standalone, signals, zoneless). `src/remoteEntry.ts` exporta `mount`
 
 Capas: `core/` (cliente de API por el gateway con el token del shell, `unidades.ts` resuelve «B-101» desde `unidadId`, adaptadores de confirmación y micrófono) y `features/<f>/` con `*.service.ts` (signals, sin red propia: reciben el puerto `Api`) y `*.page.ts` (solo presentación). Los sondeos del agente y de los reportes se liberan al desmontar. 46 pruebas con Jest (los servicios con código de regla en el nombre).
 
+**Rediseño (04/11/2026):** menú lateral (las pestañas conservan su `role="tab"` y su texto; la ayuda y el contador van por CSS), resumen y columna de apoyo en `features/resumen/` (solo cuentan y muestran lo que entregan los servicios), confirmaciones en un `<dialog>` propio (`core/confirmar.ts`, ahora asíncrono). Los códigos de regla ya no van en el texto visible; siguen en los errores del backend.
+
 **Falta:** unidades y alícuotas (F1, F2), estado de cuenta/morosos, proveedores y egresos (F11), calendario de reservas, cámaras y alertas (I4), Angular Material y Apollo (no hacen falta hasta ahora). Cómo correrlo y su contrato con el shell: `README.md`.
 
 ## Código funcional protegido (obligatorio)

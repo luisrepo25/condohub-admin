@@ -1,61 +1,59 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit, signal, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal, ViewEncapsulation } from '@angular/core';
 import { crearApi, type Api } from '../core/api';
+import { observarEscrituras } from '../core/api-observada';
 import { AgentePage } from '../features/agente/agente.page';
 import { ExpensasPage } from '../features/expensas/expensas.page';
 import { PagosPage } from '../features/pagos/pagos.page';
 import { RecargosPage } from '../features/recargos/recargos.page';
 import { ReservasPage } from '../features/reservas/reservas.page';
 import { ReportesPage } from '../features/reportes/reportes.page';
+import { ResumenService, type Resumen } from '../features/resumen/resumen.service';
+import { ResumenTarjetas } from '../features/resumen/resumen.tarjetas';
+import { RielComponent } from '../features/resumen/riel.component';
 import { SagasPage } from '../features/sagas/sagas.page';
-
-type Pestana = 'expensas' | 'pagos' | 'recargos' | 'reservas' | 'sagas' | 'agente' | 'reportes';
-
-const PESTANAS: { id: Pestana; titulo: string }[] = [
-  { id: 'expensas', titulo: 'Expensas' },
-  { id: 'pagos', titulo: 'Pagos' },
-  { id: 'recargos', titulo: 'Recargos' },
-  { id: 'reservas', titulo: 'Reservas' },
-  { id: 'sagas', titulo: 'Sagas' },
-  { id: 'agente', titulo: 'Agente' },
-  { id: 'reportes', titulo: 'Reportes por voz' },
-];
+import { GRUPOS, type Pestana } from './pestanas';
 
 /** Consola del ADMIN: compone las pantallas por función. No calcula nada; los servicios decidiendo son los backends. */
 @Component({
   selector: 'ch-consola',
   standalone: true,
-  imports: [ExpensasPage, PagosPage, RecargosPage, ReservasPage, SagasPage, AgentePage, ReportesPage],
+  imports: [ExpensasPage, PagosPage, RecargosPage, ReservasPage, SagasPage, AgentePage, ReportesPage, ResumenTarjetas, RielComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  styleUrl: './consola.component.css',
-  template: `
-    <nav class="ch-pestanas" role="tablist" aria-label="Funciones de la consola">
-      @for (p of pestanas; track p.id) {
-        <button type="button" role="tab" [class.ch-activa]="actual() === p.id" [attr.aria-selected]="actual() === p.id" (click)="actual.set(p.id)">
-          {{ p.titulo }}
-        </button>
-      }
-    </nav>
-    <section class="ch-panel" role="tabpanel">
-      @switch (actual()) {
-        @case ('expensas') { <ch-expensas [api]="api" /> }
-        @case ('pagos') { <ch-pagos [api]="api" /> }
-        @case ('recargos') { <ch-recargos [api]="api" /> }
-        @case ('reservas') { <ch-reservas [api]="api" /> }
-        @case ('sagas') { <ch-sagas [api]="api" /> }
-        @case ('agente') { <ch-agente [api]="api" /> }
-        @case ('reportes') { <ch-reportes [api]="api" /> }
-      }
-    </section>
-  `,
+  styleUrls: ['./consola.component.css', './consola.controles.css', './consola.datos.css'],
+  templateUrl: './consola.component.html',
 })
 export class ConsolaComponent implements OnInit {
   @Input({ required: true }) getToken!: () => string;
-  readonly pestanas = PESTANAS;
+  readonly grupos = GRUPOS;
   readonly actual = signal<Pestana>('expensas');
+  readonly pedido = signal<{ texto: string } | null>(null);
   api!: Api;
+  resumen!: ResumenService;
+  readonly datos = computed<Resumen>(() => this.resumen.datos());
 
   ngOnInit(): void {
-    this.api = crearApi(this.getToken);
+    const base = crearApi(this.getToken);
+    this.resumen = new ResumenService(base);
+    this.api = observarEscrituras(base, () => void this.resumen.cargar());
+    void this.resumen.cargar();
+  }
+
+  ir(pestana: string): void {
+    this.pedido.set(null);
+    this.actual.set(pestana as Pestana);
+    void this.resumen.cargar();
+  }
+
+  /** Lo que se pide en el asistente se lanza como misión en la pantalla del agente. */
+  pedir(texto: string): void {
+    this.pedido.set({ texto });
+    this.actual.set('agente');
+  }
+
+  cuenta(pestana: Pestana): number | null {
+    const d = this.datos();
+    const cuentas: Partial<Record<Pestana, number | null>> = { pagos: d.pagosPendientes, recargos: d.recargosPropuestos, sagas: d.sagasEnRevision };
+    return cuentas[pestana] || null;
   }
 }

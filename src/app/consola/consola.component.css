@@ -1,52 +1,63 @@
-/* Estilos globales de la consola (ViewEncapsulation.None): las pantallas hijas no traen hoja propia. Colores del shell (--ch-*). */
+/* Estructura de la consola (ViewEncapsulation.None): las pantallas hijas no traen hoja propia. Colores del shell (--ch-*). */
 ch-consola {
   --_bg: var(--ch-surface, #ffffff);
+  --_fondo: var(--ch-bg, #f4f6fb);
+  --_sup2: var(--ch-superficie-2, #eef2f8);
   --_texto: var(--ch-text, #1f2937);
-  --_suave: var(--ch-muted, #6b7280);
-  --_borde: var(--ch-border, #e5e7eb);
+  --_suave: var(--ch-muted, #5b6678);
+  --_borde: var(--ch-border, #e3e8f0);
+  --_fuerte: var(--ch-borde-fuerte, #9fb0c7);
   --_acento: var(--ch-accent, #2563eb);
+  --_acento-t: var(--ch-accent-texto, #ffffff);
+  --_marco: var(--ch-marco, #ffffff);
+  --_ok: var(--ch-ok, #166534);
+  --_ok-f: var(--ch-ok-fondo, #dcfce7);
+  --_aviso: var(--ch-aviso, #854d0e);
+  --_aviso-f: var(--ch-aviso-fondo, #fef3c7);
+  --_pe: var(--ch-peligro, #b91c1c);
+  --_pe-f: var(--ch-peligro-fondo, #fee2e2);
+  --_neu: var(--ch-neutro, #475569);
+  --_neu-f: var(--ch-neutro-fondo, #e2e8f0);
   display: block;
-  margin-top: 1.5rem;
   color: var(--_texto);
+  font-variant-numeric: tabular-nums;
 }
-.ch-pestanas { display: flex; flex-wrap: wrap; gap: 0.25rem; border-bottom: 1px solid var(--_borde); }
+.ch-marco {
+  display: flex; flex-wrap: wrap; align-items: stretch; overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.34); border-radius: 20px;
+  background: color-mix(in srgb, var(--_fondo) var(--ch-opacidad-marco, 90%), transparent);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+}
+.ch-pestanas { flex: 0 1 256px; min-width: 224px; display: flex; flex-direction: column; gap: 2px; padding: 12px 14px 20px; background: var(--_marco); }
+.ch-grupo { margin: 0; padding: 14px 12px 5px; color: var(--_suave); font-size: 0.82rem; font-weight: 500; }
 .ch-pestanas button {
-  padding: 0.6rem 1rem; border: 0; border-bottom: 2px solid transparent;
-  background: none; color: var(--_suave); font: inherit; cursor: pointer;
+  display: flex; align-items: center; gap: 11px; width: 100%; min-height: 54px; padding: 6px 12px;
+  border: 1px solid transparent; border-radius: 12px; background: transparent; color: var(--_texto); font: inherit; text-align: left; cursor: pointer;
+  transition: background-color 0.16s ease-out, border-color 0.16s ease-out;
 }
-.ch-pestanas button.ch-activa { color: var(--_acento); border-bottom-color: var(--_acento); font-weight: 600; }
-.ch-panel { padding-top: 1rem; }
-.ch-panel h2 { margin: 0.5rem 0; font-size: 1.15rem; }
-.ch-barra { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-.ch-tabla { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-.ch-tabla th, .ch-tabla td { padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--_borde); text-align: left; }
-.ch-tabla th { color: var(--_suave); font-weight: 600; }
-.ch-acciones { display: flex; gap: 0.4rem; }
-.ch-boton {
-  padding: 0.4rem 0.9rem; border: 1px solid var(--_borde); border-radius: 0.5rem;
-  background: var(--_bg); color: var(--_texto); font: inherit; cursor: pointer;
+.ch-pestanas button svg { flex: none; }
+.ch-pestanas button:hover { background: var(--_sup2); border-color: transparent; color: var(--_texto); }
+.ch-pestanas button.ch-activa { background: var(--_sup2); border-color: var(--_acento); color: var(--_acento); }
+/* La ayuda y el contador van por CSS: el texto de cada pestaña sigue siendo solo su título. */
+.ch-nav-t { flex: 1; min-width: 0; font-weight: 600; line-height: 1.25; }
+.ch-nav-t::after { content: attr(data-ayuda); display: block; color: var(--_suave); font-size: 0.78rem; font-weight: 400; }
+.ch-pestanas button[data-cuenta]::after {
+  content: attr(data-cuenta); display: inline-grid; place-items: center; min-width: 26px; height: 26px; padding: 0 7px;
+  border-radius: 13px; background: var(--_acento); color: var(--_acento-t); font-size: 0.8rem; font-weight: 700;
 }
-.ch-boton--ok { border-color: var(--_acento); color: var(--_acento); }
-.ch-boton--no { border-color: #b91c1c; color: #b91c1c; }
-.ch-campo { flex: 1; min-width: 12rem; padding: 0.45rem 0.7rem; border: 1px solid var(--_borde); border-radius: 0.5rem; font: inherit; }
-.ch-error { color: #b91c1c; margin: 0.5rem 0; }
-.ch-aviso { color: #166534; margin: 0.5rem 0; }
-.ch-vacio, .ch-etiqueta { color: var(--_suave); margin: 0.25rem 0 0.75rem; }
-.ch-tarjeta { border: 1px solid var(--_borde); border-radius: 0.75rem; padding: 1rem 1.25rem; margin: 0.75rem 0; background: var(--_bg); }
-.ch-pendiente { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; padding: 0.5rem 0; border-top: 1px solid var(--_borde); }
-.ch-pendiente span { flex: 1; min-width: 14rem; }
-.ch-bitacora { margin: 0.5rem 0 0; padding-left: 1.25rem; color: var(--_suave); font-size: 0.88rem; }
-.ch-tarjeta pre { white-space: pre-wrap; font-size: 0.85rem; }
-.ch-scroll { overflow-x: auto; max-height: 22rem; overflow-y: auto; margin-top: 0.5rem; }
-.ch-tarjeta details { margin: 0.4rem 0 0.75rem; }
-.ch-tarjeta a.ch-boton { display: inline-block; margin: 0.25rem 0 0.5rem; text-decoration: none; }
-.ch-historial { list-style: none; margin: 0.5rem 0; padding: 0; display: grid; gap: 0.5rem; }
-.ch-historial li { border: 1px solid var(--_borde); border-radius: 0.5rem; padding: 0.5rem 0.8rem; display: grid; gap: 0.15rem; }
-
-.ch-metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0.5rem; margin: 0.5rem 0; }
-.ch-metricas div { padding: 0.5rem 0.75rem; border: 1px solid var(--ch-borde, #d4d4d8); border-radius: 0.5rem; }
-.ch-metricas dt { font-size: 0.8rem; opacity: 0.75; }
-.ch-metricas dd { margin: 0; font-size: 1.25rem; font-weight: 600; }
-
-.ch-ejemplos { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 0.25rem 0 0.75rem; }
-.ch-ejemplos .ch-boton { font-size: 0.85rem; text-align: left; }
+.ch-area { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 18px; padding: 22px 24px 26px; }
+.ch-reparto { display: flex; flex-wrap: wrap; gap: 14px; align-items: flex-start; }
+.ch-panel { flex: 999 1 500px; min-width: 0; padding: 20px 22px 22px; }
+.ch-riel { flex: 1 1 290px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
+.ch-panel, .ch-bloque, .ch-kpi { background: var(--_bg); border: 1px solid var(--_fuerte); border-radius: 16px; box-shadow: 0 8px 22px rgba(0, 0, 0, 0.3); }
+.ch-bloque { padding: 16px 18px; }
+.ch-bloque h3 { margin: 0 0 8px; font-size: 1.05rem; font-weight: 700; }
+.ch-panel h2 { margin: 0; font-size: 1.45rem; line-height: 1.25; font-weight: 700; }
+.ch-panel h3 { margin: 16px 0 6px; font-size: 1.1rem; font-weight: 700; }
+/* El shell ya usa la clase .ch-barra para su barra superior: aquí se anula lo heredado (fija, fondo, borde). */
+ch-consola .ch-barra { position: static; z-index: auto; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 12px; margin-bottom: 8px; padding: 0; background: none; border: 0; }
+@media (max-width: 700px) {
+  .ch-pestanas { flex: 1 1 100%; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; }
+  .ch-grupo { grid-column: 1 / -1; }
+  .ch-area { padding: 16px; }
+}

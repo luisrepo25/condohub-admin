@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar } from '../../core/confirmar';
 import { EJEMPLOS_MISION } from './ejemplos';
@@ -12,9 +12,9 @@ import { MonitoreoPanel } from './monitoreo.panel';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Agente de morosidad</h2>
-    <p class="ch-etiqueta">El agente propone; nada que cree cargos o mueva dinero se ejecuta sin tu aprobación (G2).</p>
+    <p class="ch-etiqueta">El agente propone; nada que cree cargos o mueva dinero se ejecuta sin tu aprobación.</p>
     <div class="ch-barra">
-      <input class="ch-campo" #objetivo type="text" value="Gestiona la morosidad del mes" aria-label="Objetivo de la misión" />
+      <input class="ch-campo" #objetivo type="text" [value]="pedido?.texto ?? 'Gestiona la morosidad del mes'" aria-label="Objetivo de la misión" />
       <button class="ch-boton ch-boton--ok" type="button" (click)="s.lanzar(objetivo.value)">Lanzar misión</button>
     </div>
     <p class="ch-etiqueta">Ejemplos (pulsa uno para copiarlo y luego «Lanzar misión»):</p>
@@ -36,7 +36,7 @@ import { MonitoreoPanel } from './monitoreo.panel';
           </div>
         }
         <details>
-          <summary>Bitácora (G3)</summary>
+          <summary>Bitácora</summary>
           <ol class="ch-bitacora">
             @for (p of m.pasos; track p.paso) {
               <li>
@@ -52,12 +52,19 @@ import { MonitoreoPanel } from './monitoreo.panel';
     <ch-monitoreo [servicio]="s" />
   `,
 })
-export class AgentePage implements OnInit, OnDestroy {
+export class AgentePage implements OnInit, OnChanges, OnDestroy {
   @Input({ required: true }) api!: Api;
+  /** Lo pedido en el asistente de la consola: se lanza como misión al llegar. */
+  @Input() pedido: { texto: string } | null = null;
   s!: AgenteService;
 
   ngOnInit(): void {
     this.s = new AgenteService(this.api);
+    if (this.pedido) void this.s.lanzar(this.pedido.texto);
+  }
+
+  ngOnChanges(cambios: SimpleChanges): void {
+    if (cambios['pedido'] && !cambios['pedido'].firstChange && this.pedido) void this.s.lanzar(this.pedido.texto);
   }
 
   ngOnDestroy(): void {
@@ -71,7 +78,7 @@ export class AgentePage implements OnInit, OnDestroy {
     return JSON.stringify(c.argumentos ?? {});
   }
 
-  aprobar(c: Confirmacion): void {
-    if (confirmar(`¿Aprobar «${c.herramienta}»? Se ejecutará de inmediato.`)) void this.s.aprobar(c.id);
+  async aprobar(c: Confirmacion): Promise<void> {
+    if (await confirmar(`¿Aprobar «${c.herramienta}»? Se ejecutará de inmediato.`, { aceptar: 'Sí, aprobar' })) void this.s.aprobar(c.id);
   }
 }

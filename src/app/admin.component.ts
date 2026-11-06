@@ -16,33 +16,28 @@ export interface Contexto {
   styleUrl: './admin.component.css',
   template: `
     <section class="ch-remoto" data-remoto="admin">
-      <header class="ch-cabecera">
-        <h1>Consola de administración</h1>
-        <p class="ch-sesion">Sesión de {{ user.nombre }} ({{ user.email }})</p>
-      </header>
-      @if (error(); as mensaje) {
-        <p class="ch-error" role="alert">{{ mensaje }}</p>
-      }
-      @if (perfil(); as p) {
-        <div class="ch-tarjeta">
-          <p class="ch-etiqueta">Roles: {{ p.roles.join(', ') }}</p>
-          @if (p.unidades.length > 0) {
-            <h2>Mis unidades</h2>
-            <ul class="ch-unidades">
-              @for (u of p.unidades; track u.unidadId) {
+      <ch-consola [getToken]="getToken">
+        <header class="ch-cabecera">
+          <h1>Consola de administración</h1>
+          <p class="ch-sesion">Sesión de {{ user.nombre }} ({{ user.email }})@if (perfil(); as p) { · Roles: {{ p.roles.join(', ') }} }</p>
+          @if (error(); as mensaje) {
+            <p class="ch-error" role="alert">{{ mensaje }}</p>
+          }
+          @if (perfil()?.unidades?.length) {
+            <ul class="ch-unidades" aria-label="Mis unidades">
+              @for (u of perfil()?.unidades; track u.unidadId) {
                 <li>
                   <strong>{{ u.codigo }}</strong>
                   <span>Bloque {{ u.bloque }}</span>
-                  <span [class]="u.titular ? 'ch-insignia ch-insignia--titular' : 'ch-insignia'">
+                  <span [class]="u.titular ? 'ch-insignia-unidad ch-insignia-unidad--titular' : 'ch-insignia-unidad'">
                     {{ u.titular ? 'Titular' : 'Residente' }}
                   </span>
                 </li>
               }
             </ul>
           }
-        </div>
-      }
-      <ch-consola [getToken]="getToken" />
+        </header>
+      </ch-consola>
     </section>
   `,
 })
