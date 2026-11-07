@@ -6,6 +6,7 @@ import { codigosDeUnidades } from '../../core/unidades';
 export interface PagoPendiente { id: string; unidadId: string; unidad: string; monto: string; fechaPago: string }
 
 const LISTA = '{ pagosPendientes { id unidadId monto fechaPago } }';
+const URL_COMPROBANTE = 'query($id: ID!) { urlComprobante(pagoId: $id) }';
 const CONFIRMAR = 'mutation($id: ID!) { confirmarPago(pagoId: $id) { reciboNumero } }';
 const RECHAZAR = 'mutation($id: ID!, $motivo: String!) { rechazarPago(pagoId: $id, motivo: $motivo) { id } }';
 
@@ -39,6 +40,17 @@ export class PagosService extends ConEstado {
       this.aviso.set('Pago rechazado');
       this.quitar(id);
     });
+  }
+
+  /** F8: enlace temporal a la foto del comprobante; `null` si el pago se registró sin foto (p. ej. sin conexión). */
+  async verComprobante(id: string): Promise<string | null> {
+    let url: string | null = null;
+    await this.ejecutar(async () => {
+      const { urlComprobante } = await this.api.graphql<{ urlComprobante: string | null }>(URL_COMPROBANTE, { id });
+      url = urlComprobante;
+      if (!url) this.aviso.set('Sin comprobante adjunto');
+    });
+    return url;
   }
 
   private quitar(id: string): void {

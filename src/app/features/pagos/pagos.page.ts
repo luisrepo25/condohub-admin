@@ -28,6 +28,7 @@ import { PagosService } from './pagos.service';
               <td class="ch-der">{{ p.monto }}</td>
               <td>{{ fecha(p.fechaPago) }}</td>
               <td class="ch-acciones">
+                <button class="ch-boton" type="button" (click)="verComprobante(p.id)">Ver comprobante</button>
                 <button class="ch-boton ch-boton--ok" type="button" (click)="confirmarPago(p.id, p.unidad)">Confirmar</button>
                 <button class="ch-boton ch-boton--no" type="button" (click)="rechazarPago(p.id)">Rechazar</button>
               </td>
@@ -46,6 +47,11 @@ export class PagosPage implements OnInit {
   ngOnInit(): void {
     this.s = new PagosService(this.api);
     void this.s.cargar();
+  }
+
+  async verComprobante(id: string): Promise<void> {
+    const url = await this.s.verComprobante(id);
+    if (url) window.open(url, '_blank', 'noopener');
   }
 
   async confirmarPago(id: string, unidad: string): Promise<void> {
