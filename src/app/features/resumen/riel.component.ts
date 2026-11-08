@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
+import { ATAJOS_AGENTE } from './atajos';
 import type { Resumen } from './resumen.service';
 
 /** Columna de apoyo: el asistente (lanza misiones del agente) y lo que conviene tener a la vista en cualquier pantalla. */
@@ -8,14 +9,23 @@ import type { Resumen } from './resumen.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="ch-bloque">
-      <h3>Asistente</h3>
+      <h3>Pedir al agente</h3>
       <div class="ch-chat" aria-live="polite">
-        <p class="ch-msg">{{ datos.lectura?.resumen ?? 'Puedo revisar la morosidad y proponerte recargos. Nada se cobra sin tu aprobación.' }}</p>
+        <p class="ch-msg">Atajo a las misiones del agente: escribe un objetivo y se lanza; el avance y las aprobaciones están en Agente. Nada se cobra sin tu aprobación.</p>
         @for (m of enviados(); track $index) {
           <p class="ch-msg ch-msg--yo">{{ m }}</p>
           <p class="ch-msg">Misión lanzada. Sigue su avance en Agente.</p>
         }
       </div>
+      <div class="ch-ejemplos">
+        @for (a of atajos; track a) {
+          <button class="ch-boton" type="button" (click)="pedido.value = a">{{ a }}</button>
+        }
+      </div>
+      @if (datos.lectura?.resumen; as resumen) {
+        <p class="ch-etiqueta">Último informe de monitoreo</p>
+        <p class="ch-msg">{{ resumen }}</p>
+      }
       <form class="ch-enviar" (submit)="enviar($event, pedido)">
         <input #pedido class="ch-campo" type="text" maxlength="500" placeholder="Pide algo al agente…" aria-label="Pedido para el asistente" />
         <button class="ch-boton ch-boton--ok ch-boton--icono" type="submit" aria-label="Enviar pedido">
@@ -48,6 +58,7 @@ export class RielComponent {
   @Input({ required: true }) datos!: Resumen;
   @Output() pedir = new EventEmitter<string>();
   readonly enviados = signal<string[]>([]);
+  readonly atajos = ATAJOS_AGENTE;
 
   morosos() {
     return (this.datos.morosos ?? []).slice(0, 3);
