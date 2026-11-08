@@ -46,3 +46,14 @@ ch-consola .ch-historial .ch-error, ch-consola .ch-historial .ch-aviso { justify
 .ch-fila-riel { display: grid; grid-template-columns: 1fr auto; gap: 0 12px; padding: 8px 0; border-top: 1px solid var(--_borde); }
 .ch-fila-riel small { grid-column: 1 / -1; color: var(--_suave); font-size: 0.85rem; }
 .ch-riel-monto { font-size: 1.2rem; font-weight: 700; }
+.ch-accion { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 10px 0; padding: 12px 14px; border: 1px solid var(--_borde); border-left: 4px solid var(--_ok); border-radius: 10px; }
+.ch-accion__datos { flex: 1; min-width: 14rem; }
+.ch-accion__lista { display: grid; grid-template-columns: max-content 1fr; gap: 2px 12px; margin: 6px 0; }
+.ch-accion__lista dt { color: var(--_suave); }
+.ch-accion__lista dd { margin: 0; font-weight: 600; }
+.ch-resumen { margin: 10px 0; line-height: 1.5; }
+.ch-resumen__linea { margin: 3px 0; }
+.ch-resumen__titulo { margin-top: 12px; font-size: 1.05rem; }
+.ch-resumen__item { padding-left: 0.4rem; }
+.ch-resumen__subitem { padding-left: 1.8rem; color: var(--_suave); }
+.ch-resumen__subitem::before { content: "• "; }

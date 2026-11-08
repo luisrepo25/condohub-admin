@@ -1,14 +1,21 @@
-import { ChangeDetectionStrategy, Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
+import {
+  ChangeDetectionStrategy, Component, effect, inject, Injector, Input, OnChanges, OnDestroy, OnInit, signal, SimpleChanges, untracked,
+} from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar } from '../../core/confirmar';
+import { codigosDeUnidades } from '../../core/unidades';
+import { unidadesDe } from './accion-pendiente';
+import { AccionPendiente } from './accion-pendiente.tarjeta';
 import { EJEMPLOS_MISION } from './ejemplos';
 import { AgenteService, resumirDato, type Confirmacion } from './agente.service';
 import { MonitoreoPanel } from './monitoreo.panel';
+import { ResumenMision } from './resumen-mision.component';
+import { uuidsDe } from './texto-resumen';
 
 @Component({
   selector: 'ch-agente',
   standalone: true,
-  imports: [MonitoreoPanel],
+  imports: [MonitoreoPanel, AccionPendiente, ResumenMision],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <h2>Agente de misiones</h2>
@@ -27,14 +34,10 @@ import { MonitoreoPanel } from './monitoreo.panel';
     @if (s.mision(); as m) {
       <div class="ch-tarjeta" role="status">
         <p><strong>{{ m.objetivo }}</strong> — {{ m.estado }} · {{ m.pasos.length }} pasos</p>
-        @if (m.resumen) { <p>{{ m.resumen }}</p> }
         @for (c of m.confirmacionesPendientes; track c.id) {
-          <div class="ch-pendiente">
-            <span>{{ c.herramienta }} <small>({{ c.riesgo }})</small>: {{ detalle(c) }}</span>
-            <button class="ch-boton ch-boton--ok" type="button" (click)="aprobar(c)">Aprobar</button>
-            <button class="ch-boton ch-boton--no" type="button" (click)="s.rechazar(c.id)">Rechazar</button>
-          </div>
+          <ch-accion-pendiente [c]="c" [codigos]="codigos()" (aprobar)="aprobar($event)" (rechazar)="s.rechazar($event.id)" />
         }
+        @if (m.resumen) { <ch-resumen-mision [texto]="m.resumen" [codigos]="codigos()" /> }
         <details>
           <summary>Bitácora</summary>
           <ol class="ch-bitacora">
@@ -57,9 +60,13 @@ export class AgentePage implements OnInit, OnChanges, OnDestroy {
   /** Lo pedido en el asistente de la consola: se lanza como misión al llegar. */
   @Input() pedido: { texto: string } | null = null;
   s!: AgenteService;
+  /** Código de cada unidad nombrada por el agente (id → «A-132»), para no mostrar UUID. */
+  readonly codigos = signal<ReadonlyMap<string, string>>(new Map());
+  private readonly injector = inject(Injector);
 
   ngOnInit(): void {
     this.s = new AgenteService(this.api);
+    effect(() => this.resolverCodigos(), { injector: this.injector });
     if (this.pedido) void this.s.lanzar(this.pedido.texto);
   }
 
@@ -74,8 +81,15 @@ export class AgentePage implements OnInit, OnChanges, OnDestroy {
   readonly ejemplos = EJEMPLOS_MISION;
   resumen = resumirDato;
 
-  detalle(c: Confirmacion): string {
-    return JSON.stringify(c.argumentos ?? {});
+  private resolverCodigos(): void {
+    const m = this.s.mision();
+    if (!m) return;
+    const ids = [...uuidsDe(m.resumen ?? ''), ...m.confirmacionesPendientes.flatMap(unidadesDe)];
+    const faltan = ids.filter((id) => !untracked(this.codigos).has(id));
+    if (faltan.length === 0) return;
+    codigosDeUnidades(this.api, faltan)
+      .then((nuevos) => this.codigos.update((antes) => new Map([...antes, ...[...nuevos].filter(([id, codigo]) => id !== codigo)])))
+      .catch(() => undefined); // sin códigos se muestra el identificador acortado: no es motivo para fallar
   }
 
   async aprobar(c: Confirmacion): Promise<void> {

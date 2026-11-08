@@ -78,7 +78,14 @@ export class AgenteService extends ConEstado {
 
   private resolver(id: string, accion: 'aprobar' | 'rechazar'): Promise<void> {
     return this.ejecutar(async () => {
-      await this.api.rest('POST', `/agentes/confirmaciones/${id}/${accion}`);
+      try {
+        await this.api.rest('POST', `/agentes/confirmaciones/${id}/${accion}`);
+      } catch (e) {
+        // «Ya fue resuelta» (G2): la lista que se ve está vieja; se refresca para no dejar botones que ya no valen.
+        const vista = this.mision();
+        if (vista) await this.actualizar(vista.id);
+        throw e;
+      }
       const actual = this.mision();
       if (actual) await this.actualizar(actual.id);
     });
