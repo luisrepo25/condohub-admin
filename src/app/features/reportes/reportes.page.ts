@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, Input, OnDestroy, OnInit, signal } 
 import type { Api } from '../../core/api';
 import { Grabadora } from '../../core/grabadora';
 import { EJEMPLOS_REPORTE } from './ejemplos';
-import { ReportesService, type FormatoReporte } from './reportes.service';
+import { ReportesService, type FormatoElegido } from './reportes.service';
 import { VistaPreviaTabla } from './vista-previa.tabla';
 
 @Component({
@@ -19,7 +19,7 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
     </div>
     <div class="ch-barra">
       <select class="ch-campo" #formato aria-label="Formato del reporte">
-        <option value="EXCEL">Excel</option><option value="PDF">PDF</option>
+        <option value="">Según la instrucción</option><option value="EXCEL">Excel</option><option value="PDF">PDF</option>
       </select>
       @if (grabando()) {
         <button class="ch-boton ch-boton--no" type="button" (click)="detener(formato.value)">Detener y generar</button>
@@ -76,15 +76,15 @@ export class ReportesPage implements OnInit, OnDestroy {
 
   async detener(formato: string): Promise<void> {
     this.grabando.set(false);
-    await this.s.crear(await this.grabadora.detener(), formato as FormatoReporte);
+    await this.s.crear(await this.grabadora.detener(), formato as FormatoElegido);
   }
 
   async escribir(instruccion: string, formato: string): Promise<void> {
-    await this.s.crearPorTexto(instruccion, formato as FormatoReporte);
+    await this.s.crearPorTexto(instruccion, formato as FormatoElegido);
   }
 
   async subir(evento: Event, formato: string): Promise<void> {
     const archivo = (evento.target as HTMLInputElement).files?.[0];
-    if (archivo) await this.s.crear(archivo, formato as FormatoReporte);
+    if (archivo) await this.s.crear(archivo, formato as FormatoElegido);
   }
 }

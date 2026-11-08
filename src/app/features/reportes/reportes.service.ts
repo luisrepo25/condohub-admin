@@ -3,6 +3,8 @@ import type { Api } from '../../core/api';
 import { ConEstado } from '../../core/operacion';
 
 export type FormatoReporte = 'EXCEL' | 'PDF';
+/** `''` = «según la instrucción»: no se envía y el servicio lo toma de lo que se dijo (por defecto, Excel). */
+export type FormatoElegido = FormatoReporte | '';
 /** Primeras filas del resultado (G4): cada fila va alineada con las columnas y en texto. */
 export interface VistaPrevia { columnas: string[]; filas: (string | null)[][]; total: number }
 export interface Reporte {
@@ -21,11 +23,11 @@ export class ReportesService extends ConEstado {
     super();
   }
 
-  crear(audio: Blob, formato: FormatoReporte): Promise<void> {
+  crear(audio: Blob, formato: FormatoElegido): Promise<void> {
     return this.ejecutar(async () => {
       const datos = new FormData();
       datos.append('audio', audio, 'instruccion.webm');
-      datos.append('formato', formato);
+      if (formato) datos.append('formato', formato);
       const r = await this.api.rest<Reporte>('POST', '/ia/reportes/voz', datos);
       this.reporte.set(r);
       this.vigilar(r.id);
@@ -33,13 +35,13 @@ export class ReportesService extends ConEstado {
   }
 
   /** La misma orden, escrita en vez de hablada: el servicio omite Whisper y el resto del flujo es igual. */
-  crearPorTexto(instruccion: string, formato: FormatoReporte): Promise<void> {
+  crearPorTexto(instruccion: string, formato: FormatoElegido): Promise<void> {
     return this.ejecutar(async () => {
       const texto = instruccion.trim();
       if (texto === '') throw new Error('Escribe la instrucción del reporte');
       const datos = new FormData();
       datos.append('instruccion', texto);
-      datos.append('formato', formato);
+      if (formato) datos.append('formato', formato);
       const r = await this.api.rest<Reporte>('POST', '/ia/reportes/voz', datos);
       this.reporte.set(r);
       this.vigilar(r.id);
