@@ -2,7 +2,7 @@ import { signal } from '@angular/core';
 import type { Api } from '../../core/api';
 import { ConEstado } from '../../core/operacion';
 
-export type FormatoReporte = 'EXCEL' | 'PDF';
+export type FormatoReporte = 'EXCEL' | 'PDF' | 'WORD';
 /** `''` = «según la instrucción»: no se envía y el servicio lo toma de lo que se dijo (por defecto, Excel). */
 export type FormatoElegido = FormatoReporte | '';
 /** Primeras filas del resultado (G4): cada fila va alineada con las columnas y en texto. */
@@ -14,7 +14,7 @@ export interface Reporte {
 
 const INTERVALO_MS = 2000;
 
-/** G4: audio (o archivo de audio) → el servicio IA lo transcribe, arma una consulta de solo lectura y genera Excel o PDF. */
+/** G4: audio (o archivo de audio) → el servicio IA lo transcribe, arma una consulta de solo lectura y genera Excel, PDF o Word. */
 export class ReportesService extends ConEstado {
   readonly reporte = signal<Reporte | null>(null);
   private temporizador: ReturnType<typeof setTimeout> | undefined;

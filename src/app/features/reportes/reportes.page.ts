@@ -19,7 +19,7 @@ import { VistaPreviaTabla } from './vista-previa.tabla';
     </div>
     <div class="ch-barra">
       <select class="ch-campo" #formato aria-label="Formato del reporte">
-        <option value="">Según la instrucción</option><option value="EXCEL">Excel</option><option value="PDF">PDF</option>
+        <option value="">Según la instrucción</option><option value="EXCEL">Excel</option><option value="PDF">PDF</option><option value="WORD">Word</option>
       </select>
       @if (grabando()) {
         <button class="ch-boton ch-boton--no" type="button" (click)="detener(formato.value)">Detener y generar</button>

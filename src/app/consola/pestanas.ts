@@ -22,7 +22,7 @@ export const GRUPOS: { titulo: string; items: ItemPestana[] }[] = [
     titulo: 'Asistentes',
     items: [
       { id: 'agente', titulo: 'Agente', ayuda: 'Morosidad y monitoreo', icono: 'M6 8h12v10H6zM12 8V4M9 12h.01M15 12h.01M3 12v3M21 12v3' },
-      { id: 'reportes', titulo: 'Reportes por voz', ayuda: 'Excel o PDF', icono: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3' },
+      { id: 'reportes', titulo: 'Reportes por voz', ayuda: 'Excel, PDF o Word', icono: 'M12 3a3 3 0 0 0-3 3v6a3 3 0 0 0 6 0V6a3 3 0 0 0-3-3zM5 11a7 7 0 0 0 14 0M12 18v3' },
     ],
   },
 ];

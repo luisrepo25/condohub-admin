@@ -68,6 +68,8 @@ Capas: `core/` (cliente de API por el gateway con el token del shell, `unidades.
 
 **Rediseño (04/11/2026):** menú lateral (las pestañas conservan su `role="tab"` y su texto; la ayuda y el contador van por CSS), resumen y columna de apoyo en `features/resumen/` (solo cuentan y muestran lo que entregan los servicios), confirmaciones en un `<dialog>` propio (`core/confirmar.ts`, ahora asíncrono). Los códigos de regla ya no van en el texto visible; siguen en los errores del backend.
 
+**Reportes en Word (08/11/2026, G4):** el selector de formato suma «Word» y hay ejemplos con criterios (bloque, mínimo de expensas, totales por bloque, varias tablas). Único test existente editado: `reportes-formato-automatico.spec.ts` (la lista de opciones del selector), porque la regla G4 cambió en `reglas-de-negocio.md` en el mismo cambio.
+
 **Falta:** unidades y alícuotas (F1, F2), estado de cuenta/morosos, proveedores y egresos (F11), calendario de reservas, cámaras y alertas (I4), Angular Material y Apollo (no hacen falta hasta ahora). Cómo correrlo y su contrato con el shell: `README.md`.
 
 ## Código funcional protegido (obligatorio)

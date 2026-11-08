@@ -58,6 +58,6 @@ describe('G4_formato_segun_la_instruccion', () => {
     const opciones = Array.from(selector.options).map((o) => [o.value, o.textContent?.trim()]);
 
     expect(selector.value).toBe('');
-    expect(opciones).toEqual([['', 'Según la instrucción'], ['EXCEL', 'Excel'], ['PDF', 'PDF']]);
+    expect(opciones).toEqual([['', 'Según la instrucción'], ['EXCEL', 'Excel'], ['PDF', 'PDF'], ['WORD', 'Word']]);
   });
 });
