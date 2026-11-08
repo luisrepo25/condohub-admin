@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
+import { soloConAlertas } from '../../core/listas';
 import type { AgenteService } from './agente.service';
 import { InformeTarjeta } from './informe.tarjeta';
 
@@ -19,8 +20,10 @@ import { InformeTarjeta } from './informe.tarjeta';
     @if (servicio.historial().length === 0) {
       <p class="ch-vacio">Todavía no hay informes.</p>
     } @else {
+      <label class="ch-etiqueta"><input type="checkbox" #a aria-label="Solo informes con alertas" (change)="conAlertas.set(a.checked)" /> Solo con alertas</label>
+      @if (visibles().length === 0) { <p class="ch-vacio">Ningún informe tiene alertas.</p> }
       <ul class="ch-historial">
-        @for (h of servicio.historial(); track h.id) {
+        @for (h of visibles(); track h.id) {
           <li>
             <strong>{{ cuando(h.generadoEn) }}</strong> · {{ h.resumen }}
             <span [class]="h.alertas.length === 0 ? 'ch-aviso' : 'ch-error'">{{ h.alertas.length === 0 ? 'Sin alertas' : h.alertas.length + ' alerta(s)' }}</span>
@@ -32,6 +35,8 @@ import { InformeTarjeta } from './informe.tarjeta';
 })
 export class MonitoreoPanel implements OnInit {
   @Input({ required: true }) servicio!: AgenteService;
+  readonly conAlertas = signal(false);
+  readonly visibles = computed(() => soloConAlertas(this.servicio.historial(), this.conAlertas()));
 
   ngOnInit(): void {
     void this.servicio.cargarInformes();

@@ -1,7 +1,11 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar } from '../../core/confirmar';
+import { agruparReservas, filtrarReservas } from '../../core/listas';
 import { puedeFinalizar, ReservasService, type ReservaAdmin } from './reservas.service';
+
+/** Una fila de la tabla: un encabezado de grupo o una reserva. */
+interface Fila { grupo?: string; r?: ReservaAdmin }
 
 @Component({
   selector: 'ch-reservas',
@@ -18,11 +22,24 @@ import { puedeFinalizar, ReservasService, type ReservaAdmin } from './reservas.s
     @if (s.reservas().length === 0) {
       <p class="ch-vacio">No hay reservas.</p>
     } @else {
+      <div class="ch-filtros">
+        <input class="ch-campo" type="search" #q placeholder="Buscar unidad (ej. A-132)" aria-label="Buscar por unidad" (input)="busqueda.set(q.value)" />
+        <select class="ch-campo" #e aria-label="Filtrar por estado" (change)="estado.set(e.value)">
+          <option value="TODOS">Todos los estados</option>
+          @for (x of estados; track x) { <option [value]="x">{{ x }}</option> }
+        </select>
+        <select class="ch-campo" #a aria-label="Filtrar por área" (change)="area.set(a.value)">
+          <option value="TODOS">Todas las áreas</option>
+          @for (x of areas(); track x) { <option [value]="x">{{ x }}</option> }
+        </select>
+      </div>
+      @if (filas().length === 0) { <p class="ch-vacio">Ninguna reserva coincide con el filtro.</p> }
       <div class="ch-scroll">
         <table class="ch-tabla">
           <thead><tr><th>Unidad</th><th>Área</th><th>Horario</th><th>Estado</th><th class="ch-der">Uso</th><th class="ch-der">Garantía</th><th class="ch-der">Acciones</th></tr></thead>
           <tbody>
-            @for (r of s.reservas(); track r.id) {
+            @for (f of filas(); track $index) {
+              @if (f.r; as r) {
               <tr>
                 <td>{{ r.unidad }}</td><td>{{ r.area }}</td><td>{{ horario(r) }}</td>
                 <td><span class="ch-insignia" [attr.data-estado]="r.estado">{{ r.estado }}</span>@if (r.motivo) { <small>{{ r.motivo }}</small> }</td>
@@ -34,6 +51,9 @@ import { puedeFinalizar, ReservasService, type ReservaAdmin } from './reservas.s
                   }
                 </td>
               </tr>
+              } @else {
+              <tr class="ch-grupo-fila"><th colspan="7">{{ f.grupo }}</th></tr>
+              }
             }
           </tbody>
         </table>
@@ -44,6 +64,18 @@ import { puedeFinalizar, ReservasService, type ReservaAdmin } from './reservas.s
 export class ReservasPage implements OnInit {
   @Input({ required: true }) api!: Api;
   s!: ReservasService;
+  readonly estados = ['SOLICITADA', 'CONFIRMADA', 'FINALIZADA', 'CANCELADA', 'FALLIDA'];
+  readonly busqueda = signal('');
+  readonly estado = signal('TODOS');
+  readonly area = signal('TODOS');
+  readonly areas = computed(() => [...new Set(this.s.reservas().map((r) => r.area))].sort());
+  /** Próximas arriba y anteriores debajo, cada grupo con su título (R8: las vivas son las que requieren atención). */
+  readonly filas = computed(() => {
+    const filtro = { busqueda: this.busqueda(), estado: this.estado(), area: this.area() };
+    const { proximas, anteriores } = agruparReservas(filtrarReservas(this.s.reservas(), filtro));
+    const grupo = (titulo: string, lista: ReservaAdmin[]): Fila[] => (lista.length ? [{ grupo: `${titulo} (${lista.length})` }, ...lista.map((r) => ({ r }))] : []);
+    return [...grupo('Próximas', proximas), ...grupo('Anteriores', anteriores)];
+  });
 
   ngOnInit(): void {
     this.s = new ReservasService(this.api);

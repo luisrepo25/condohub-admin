@@ -1,6 +1,7 @@
-import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, Input, OnInit, signal } from '@angular/core';
 import type { Api } from '../../core/api';
 import { confirmar, pedirMotivo } from '../../core/confirmar';
+import { filtrarRecargos } from '../../core/listas';
 import { RecargosService } from './recargos.service';
 
 @Component({
@@ -18,10 +19,19 @@ import { RecargosService } from './recargos.service';
     @if (s.recargos().length === 0) {
       <p class="ch-vacio">No hay recargos esperando confirmación.</p>
     } @else {
+      <div class="ch-filtros">
+        <input class="ch-campo" type="search" #q placeholder="Buscar unidad (ej. A-132)" aria-label="Buscar por unidad" (input)="busqueda.set(q.value)" />
+        <select class="ch-campo" #o aria-label="Filtrar por origen" (change)="origen.set(o.value)">
+          <option value="TODOS">Todos los orígenes</option><option value="AGENTE">Propuestos por el agente</option>
+          <option value="SISTEMA">Propuestos por el sistema</option><option value="ADMIN">Propuestos por el admin</option>
+        </select>
+        <span class="ch-etiqueta">Mostrando {{ visibles().length }} de {{ s.recargos().length }}</span>
+      </div>
+      @if (visibles().length === 0) { <p class="ch-vacio">Ningún recargo coincide con el filtro.</p> }
       <div class="ch-scroll"><table class="ch-tabla">
         <thead><tr><th>Unidad</th><th>Periodo</th><th class="ch-der">Base</th><th class="ch-der">%</th><th class="ch-der">Monto</th><th>Origen</th><th class="ch-der">Acciones</th></tr></thead>
         <tbody>
-          @for (r of s.recargos(); track r.id) {
+          @for (r of visibles(); track r.id) {
             <tr>
               <td>{{ r.unidad }}</td><td>{{ r.periodo }}</td><td class="ch-der">{{ r.base }}</td>
               <td class="ch-der">{{ r.porcentaje }}</td><td class="ch-der">{{ r.monto }}</td><td>{{ r.origen }}</td>
@@ -39,6 +49,9 @@ import { RecargosService } from './recargos.service';
 export class RecargosPage implements OnInit {
   @Input({ required: true }) api!: Api;
   s!: RecargosService;
+  readonly busqueda = signal('');
+  readonly origen = signal('TODOS');
+  readonly visibles = computed(() => filtrarRecargos(this.s.recargos(), { busqueda: this.busqueda(), origen: this.origen() }));
 
   ngOnInit(): void {
     this.s = new RecargosService(this.api);

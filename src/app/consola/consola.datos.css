@@ -58,3 +58,6 @@ ch-consola .ch-historial .ch-error, ch-consola .ch-historial .ch-aviso { justify
 .ch-resumen__subitem { padding-left: 1.8rem; color: var(--_suave); }
 .ch-resumen__subitem::before { content: "• "; }
 ch-monitoreo { display: block; margin-top: 26px; padding-top: 18px; border-top: 1px solid var(--_borde); }
+.ch-filtros { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 8px 0 12px; }
+.ch-filtros .ch-campo { flex: 1; min-width: 11rem; max-width: 20rem; }
+.ch-grupo-fila th { padding-top: 14px; text-align: left; color: var(--_suave); font-size: 0.85rem; letter-spacing: 0.02em; text-transform: uppercase; }
