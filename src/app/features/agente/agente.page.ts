@@ -18,7 +18,7 @@ import { uuidsDe } from './texto-resumen';
   imports: [MonitoreoPanel, AccionPendiente, ResumenMision],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h2>Agente de misiones</h2>
+    <h2>Misiones del agente (a pedido)</h2>
     <p class="ch-etiqueta">El agente propone; nada que cree cargos o mueva dinero se ejecuta sin tu aprobación.</p>
     <div class="ch-barra">
       <input class="ch-campo" #objetivo type="text" [value]="pedido?.texto ?? 'Gestiona la morosidad del mes'" aria-label="Objetivo de la misión" />

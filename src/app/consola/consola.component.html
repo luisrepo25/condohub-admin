@@ -25,7 +25,7 @@
           @case ('reportes') { <ch-reportes [api]="api" /> }
         }
       </section>
-      <ch-riel class="ch-riel" [datos]="datos()" (pedir)="pedir($event)" />
+      <ch-riel class="ch-riel" [datos]="datos()" (abrir)="ir('agente')" />
     </div>
   </div>
 </div>

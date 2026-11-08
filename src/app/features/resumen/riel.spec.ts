@@ -1,38 +1,36 @@
 import { provideExperimentalZonelessChangeDetection } from '@angular/core';
 import { TestBed } from '@angular/core/testing';
-import { ATAJOS_AGENTE } from './atajos';
 import type { Resumen } from './resumen.service';
 import { RielComponent } from './riel.component';
 
-describe('RielComponent: pedir al agente', () => {
+describe('RielComponent: columna de apoyo', () => {
   async function pintar(datos: Partial<Resumen>) {
     TestBed.resetTestingModule();
     TestBed.configureTestingModule({ providers: [provideExperimentalZonelessChangeDetection()] });
     const f = TestBed.createComponent(RielComponent);
     f.componentRef.setInput('datos', datos as Resumen);
-    const pedidos: string[] = [];
-    f.componentInstance.pedir.subscribe((t) => pedidos.push(t));
+    let aperturas = 0;
+    f.componentInstance.abrir.subscribe(() => aperturas++);
     await f.whenStable();
-    return { el: f.nativeElement as HTMLElement, pedidos };
+    return { el: f.nativeElement as HTMLElement, aperturas: () => aperturas };
   }
 
-  it('G1_el_cuadro_se_llama_pedir_al_agente_y_explica_que_es_un_atajo_a_las_misiones', async () => {
+  it('G1_la_columna_no_tiene_un_segundo_campo_para_lanzar_misiones', async () => {
     const { el } = await pintar({});
 
-    expect(el.querySelector('h3')?.textContent).toContain('Pedir al agente');
-    expect(el.textContent).toContain('Atajo a las misiones');
+    expect(el.querySelector('input')).toBeNull();
+    expect(el.textContent).not.toContain('Pedir al agente');
   });
 
-  it('G2_pulsar_un_atajo_copia_el_texto_al_campo_pero_no_lanza_la_mision', async () => {
-    const { el, pedidos } = await pintar({});
+  it('G1_el_boton_abrir_agente_lleva_a_la_pantalla_de_misiones', async () => {
+    const { el, aperturas } = await pintar({});
 
-    (el.querySelector('.ch-ejemplos button') as HTMLButtonElement).click();
+    (el.querySelector('button[aria-label="Abrir el agente"]') as HTMLButtonElement).click();
 
-    expect((el.querySelector('input[aria-label="Pedido para el asistente"]') as HTMLInputElement).value).toBe(ATAJOS_AGENTE[0]);
-    expect(pedidos).toEqual([]);
+    expect(aperturas()).toBe(1);
   });
 
-  it('G5_el_resumen_del_monitoreo_se_muestra_aparte_y_con_su_nombre', async () => {
+  it('G5_el_resumen_del_monitoreo_se_muestra_con_su_nombre', async () => {
     const { el } = await pintar({ lectura: { resumen: '3 alertas' } } as Partial<Resumen>);
 
     expect(el.textContent).toContain('Último informe de monitoreo');

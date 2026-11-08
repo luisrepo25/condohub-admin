@@ -9,7 +9,7 @@ import { InformeTarjeta } from './informe.tarjeta';
   imports: [InformeTarjeta],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h2>Agente de monitoreo</h2>
+    <h2>Monitoreo diario (automático)</h2>
     <p class="ch-etiqueta">Lee morosos y pagos pendientes, compara con las lecturas anteriores y avisa. Nunca actúa.</p>
     <button class="ch-boton" type="button" (click)="ejecutar()">Ejecutar ahora</button>
     @if (servicio.informe(); as i) {

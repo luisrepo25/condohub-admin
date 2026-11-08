@@ -1,37 +1,20 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, signal } from '@angular/core';
-import { ATAJOS_AGENTE } from './atajos';
+import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import type { Resumen } from './resumen.service';
 
-/** Columna de apoyo: el asistente (lanza misiones del agente) y lo que conviene tener a la vista en cualquier pantalla. */
+/** Columna de apoyo: lo que conviene tener a la vista en cualquier pantalla y un acceso al agente (las misiones se lanzan en su pantalla). */
 @Component({
   selector: 'ch-riel',
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <section class="ch-bloque">
-      <h3>Pedir al agente</h3>
-      <div class="ch-chat" aria-live="polite">
-        <p class="ch-msg">Atajo a las misiones del agente: escribe un objetivo y se lanza; el avance y las aprobaciones están en Agente. Nada se cobra sin tu aprobación.</p>
-        @for (m of enviados(); track $index) {
-          <p class="ch-msg ch-msg--yo">{{ m }}</p>
-          <p class="ch-msg">Misión lanzada. Sigue su avance en Agente.</p>
-        }
-      </div>
-      <div class="ch-ejemplos">
-        @for (a of atajos; track a) {
-          <button class="ch-boton" type="button" (click)="pedido.value = a">{{ a }}</button>
-        }
-      </div>
+      <h3>Agente</h3>
+      <p class="ch-msg">Las misiones del agente (morosidad, recordatorios) se lanzan y se aprueban en su pantalla. Nada se cobra sin tu aprobación.</p>
+      <button class="ch-boton ch-boton--ok" type="button" aria-label="Abrir el agente" (click)="abrir.emit()">Abrir agente</button>
       @if (datos.lectura?.resumen; as resumen) {
         <p class="ch-etiqueta">Último informe de monitoreo</p>
         <p class="ch-msg">{{ resumen }}</p>
       }
-      <form class="ch-enviar" (submit)="enviar($event, pedido)">
-        <input #pedido class="ch-campo" type="text" maxlength="500" placeholder="Pide algo al agente…" aria-label="Pedido para el asistente" />
-        <button class="ch-boton ch-boton--ok ch-boton--icono" type="submit" aria-label="Enviar pedido">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6" /></svg>
-        </button>
-      </form>
     </section>
     <section class="ch-bloque">
       <h3>Unidades con más deuda vencida</h3>
@@ -56,21 +39,10 @@ import type { Resumen } from './resumen.service';
 })
 export class RielComponent {
   @Input({ required: true }) datos!: Resumen;
-  @Output() pedir = new EventEmitter<string>();
-  readonly enviados = signal<string[]>([]);
-  readonly atajos = ATAJOS_AGENTE;
+  @Output() abrir = new EventEmitter<void>();
 
   morosos() {
     return (this.datos.morosos ?? []).slice(0, 3);
-  }
-
-  enviar(evento: Event, campo: HTMLInputElement): void {
-    evento.preventDefault();
-    const texto = campo.value.trim();
-    if (!texto) return;
-    campo.value = '';
-    this.enviados.update((m) => [...m, texto]);
-    this.pedir.emit(texto);
   }
 
   cuando(iso: string): string {
